@@ -23,7 +23,6 @@ namespace NameBending
         public Variation Variation;
         public List<BentImage> BentImages = new List<BentImage>();
         public Il2CppRUMBLE.Players.Player Owner;
-        private string lastKnownHash = "";
         private Il2CppPhoton.Realtime.Player photonOwner => Owner.Controller.gameObject.GetComponent<PhotonView>().Owner;
 
         public bool IsLocal = false;
@@ -77,10 +76,7 @@ namespace NameBending
         {
             if (!PhotonNetwork.InRoom) return;
 
-            if (photonOwner.CustomProperties["NameBending." + typeString + ".HashCode"].ToString() != lastKnownHash)
-            {
-                FetchVariation();
-            }
+            FetchVariation();
         }
 
         void onUpdateDesignations()
@@ -105,9 +101,7 @@ namespace NameBending
             else
             {
                 string fetchedVariation = photonOwner.CustomProperties["NameBending." + typeString].ToString();
-                string fetchedHash = photonOwner.CustomProperties["NameBending." + typeString + ".HashCode"].ToString();
                 Variation = JsonConvert.DeserializeObject<Variation>(fetchedVariation);
-                lastKnownHash = fetchedHash;
 
                 //if (ModUISettings.SaveNamesToFiles && !Variation.ProhibitCaching)
                 //    cacheVariation(Variation);

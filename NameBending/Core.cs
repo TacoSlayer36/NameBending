@@ -486,7 +486,6 @@ namespace NameBending
             }
             Il2CppExitGames.Client.Photon.Hashtable prop = new();
             prop["NameBending." + type] = (Il2CppSystem.Object)variation.SerializedJson;
-            prop["NameBending." + type + ".HashCode"] = (Il2CppSystem.Object)variation.GetHashCode();
             local.SetCustomProperties(prop);
         }
 
