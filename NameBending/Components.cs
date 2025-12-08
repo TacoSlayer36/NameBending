@@ -12,6 +12,7 @@ using Il2CppPhoton.Pun;
 using System.Text.RegularExpressions;
 using System.Linq;
 using System.Collections;
+using Tomlet.Exceptions;
 
 namespace NameBending
 {
@@ -41,17 +42,24 @@ namespace NameBending
 
         void Start()
         {
-            FetchVariation();
             Core.Instance.OnUpdateDesignations += onUpdateDesignations;
+            onUpdateDesignations();
+        }
 
-            ApplyImages();
+        void OnDestroy()
+        {
+            Core.Instance.OnUpdateDesignations -= onUpdateDesignations;
         }
 
         void Update()
         {
             if (Input.GetKeyDown(KeyCode.I))
             {
-                ApplyImages();
+                foreach (BentImage bentImage in BentImages)
+                {
+                    object newRoutine = MelonCoroutines.Start(bentImage.SetTexture());
+                    bentImage.SetTextureRoutine = newRoutine;
+                }
             }
         }
 
@@ -69,7 +77,7 @@ namespace NameBending
         {
             if (!PhotonNetwork.InRoom) return;
 
-            if (photonOwner.CustomProperties["NameBending. " + typeString + ".HashCode"].ToString() != lastKnownHash)
+            if (photonOwner.CustomProperties["NameBending." + typeString + ".HashCode"].ToString() != lastKnownHash)
             {
                 FetchVariation();
             }
@@ -77,8 +85,11 @@ namespace NameBending
 
         void onUpdateDesignations()
         {
+            //if (gameObject == null) return;
+
             ResetAll();
             FetchVariation();
+            ApplyImages();
             Timer = 0f;
         }
 
@@ -98,9 +109,15 @@ namespace NameBending
                 Variation = JsonConvert.DeserializeObject<Variation>(fetchedVariation);
                 lastKnownHash = fetchedHash;
 
-                if (ModUISettings.SaveNamesToFiles && !Variation.ProhibitCaching)
-                    cacheVariation(Variation);
+                //if (ModUISettings.SaveNamesToFiles && !Variation.ProhibitCaching)
+                //    cacheVariation(Variation);
             }
+        }
+
+        public void ReapplyImages()
+        {
+            ResetImages();
+            ApplyImages();
         }
 
         public void ApplyImages()
@@ -109,15 +126,19 @@ namespace NameBending
             {
                 foreach (ImageInfo imageInfo in Variation.Images)
                 {
-                    AttachImage(imageInfo, Variation);
+                    CreateImageObject(imageInfo, Variation);
                 }
+            }
+
+            foreach (BentImage bentImage in BentImages)
+            {
+                object newRoutine = MelonCoroutines.Start(bentImage.SetTexture());
+                bentImage.SetTextureRoutine = newRoutine;
             }
         }
 
-        private void AttachImage(ImageInfo imageInfo, Variation containerVariation)
+        private void CreateImageObject(ImageInfo imageInfo, Variation containerVariation)
         {
-            Texture2D texture = imageInfo.Texture;
-
             // Create a new GameObject for the plane
             GameObject planeGO = GameObject.CreatePrimitive(PrimitiveType.Plane);
             planeGO.name = "BentImagePlane";
@@ -128,9 +149,8 @@ namespace NameBending
             planeGO.transform.localScale = new Vector3(imageInfo.Width / 1000, 1f, imageInfo.Height / 1000);
             planeGO.transform.localRotation *= Quaternion.Euler(90f, 180f, 0f);
 
-            // Assign the texture to the plane's material
-            Material mat = new Material(Shader.Find("Universal Render Pipeline/Unlit"));
-            mat.mainTexture = texture;
+            Material mat = new Material(Core.Instance.CachedImageShader);
+            mat.mainTexture = Texture2D.whiteTexture;
             planeGO.GetComponent<Renderer>().material = mat;
 
             // Track the image for later reset
@@ -145,15 +165,25 @@ namespace NameBending
         void cacheVariation(Variation variation)
         {
             string fileText = variation.SerializedJson;
-            File.WriteAllText(Path.Combine("UserData", Core.Instance.ModFolder, "saved_names", variation.GetJsonPropertiesHashCode().ToString() + ".json"), fileText);
+            string dir = Path.Combine("UserData", Core.Instance.ModFolder, "saved_names");
+            string file = Path.Combine(dir, variation.GetJsonPropertiesHashCode().ToString() + ".json");
+            if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
+            File.WriteAllText(file, fileText);
         }
 
         public void Render()
         {
-            if (Variation.LoopFrames)
-                animationProgress = (Timer / frameDurationInSeconds) % Variation.FindTotalFrameCount();
+            if (frameDurationInSeconds > 0)
+            {
+                if (Variation.LoopFrames)
+                    animationProgress = (Timer / frameDurationInSeconds) % Variation.FindTotalFrameCount();
+                else
+                    animationProgress = Math.Min(Timer / frameDurationInSeconds, Variation.FindLargestModifier());
+            }
             else
-                animationProgress = Math.Min(Timer / frameDurationInSeconds, Variation.FindLargestModifier());
+            {
+                animationProgress = 0;
+            }
 
             try
             {
@@ -379,6 +409,7 @@ namespace NameBending
     {
         public ImageInfo ImageInfo;
         public GameObject GameObject;
+        public object SetTextureRoutine;
         public bool IsReset = false;
 
         public void Reset()
@@ -388,7 +419,22 @@ namespace NameBending
                 GameObject.Destroy(GameObject);
             }
             catch { }
+            if (SetTextureRoutine != null)
+            {
+                MelonCoroutines.Stop(SetTextureRoutine);
+            }
             IsReset = true;
+        }
+
+        public IEnumerator SetTexture()
+        {
+            int tries = 0;
+            while (!ImageInfo.TextureDownloaded)
+            {
+                if (tries++ >= 500) yield break;
+                yield return new WaitForSeconds(0.1f);
+            }
+            GameObject.GetComponent<Renderer>().material.mainTexture = ImageInfo.Texture;
         }
     }
 }

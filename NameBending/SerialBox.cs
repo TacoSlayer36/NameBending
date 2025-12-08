@@ -7,10 +7,13 @@ using Newtonsoft.Json;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Networking;
-using UnityEngine.UI;
 using static NameBending.Core;
+using ThreeDISevenZeroR.UnityGifDecoder;
+using ThreeDISevenZeroR.UnityGifDecoder.Model;
+using UnityEngine.Playables;
 
 namespace NameBending
 {
@@ -264,22 +267,32 @@ namespace NameBending
         private float? _width = null;
 
         [JsonIgnore]
-        private Texture2D _texture = null;
+        public List<Texture2D> Textures = new List<Texture2D>();
 
         [JsonIgnore]
         public Texture2D Texture
         {
-            get { return _texture ?? Texture2D.whiteTexture; }
+            get
+            {
+                if (Textures.Count == 0) return Texture2D.whiteTexture;
+                return Textures[0] ?? Texture2D.whiteTexture;
+            }
         }
+
+        [JsonIgnore]
+        public bool isGIF = false;
+
+        [JsonIgnore]
+        public bool TextureDownloaded = false;
 
         [JsonIgnore]
         private float aspectRatio
         {
             get
             {
-                if (_texture == null) return 0f;
-                else if (_texture.height == 0 || _texture.width == 0) return 0f;
-                else return _texture.height / _texture.width;
+                if (Texture == null) return 0f;
+                else if (Texture.height == 0 || Texture.width == 0) return 0f;
+                else return Texture.height / Texture.width;
             }
         }
 
@@ -289,7 +302,7 @@ namespace NameBending
             get
             {
                 if (_width != null) return (float)_width;
-                else if (_height != null) return (float)_height * aspectRatio;
+                else if (_height != null) return (float)_height / aspectRatio;
                 else return 100f;
             }
         }
@@ -305,10 +318,12 @@ namespace NameBending
             }
         }
 
+        [JsonIgnore]
+        public object DownloadCoroutine;
+
         public IEnumerator DownloadImage()
         {
             UnityWebRequest uwr = UnityWebRequest.Get(Link);
-            uwr.downloadHandler = new DownloadHandlerBuffer();
             yield return uwr.SendWebRequest();
 
             if (uwr.result != UnityWebRequest.Result.Success)
@@ -319,15 +334,29 @@ namespace NameBending
             }
 
             byte[] imageBytes = uwr.downloadHandler.data;
-            _texture = new Texture2D(2, 2, TextureFormat.RGBA32, false);
-            if (!_texture.LoadImage(imageBytes))
+            uwr.Dispose();
+
+            Textures.Clear();
+
+            isGIF = Link.ToLower().EndsWith(".gif");
+
+            if (isGIF)
             {
-                MelonLogger.Error($"Failed to create texture from downloaded data: {Link}");
-                uwr.Dispose();
-                yield break;
+                
+            }
+            else
+            {
+                var tex = new Texture2D(2, 2, TextureFormat.RGBA32, false);
+                if (!tex.LoadImage(imageBytes))
+                {
+                    MelonLogger.Error($"Failed to create texture from downloaded data: {Link}");
+                    TextureDownloaded = false;
+                    yield break;
+                }
+                Textures.Add(tex);
             }
 
-            uwr.Dispose();
+            TextureDownloaded = true;
         }
     }
 }

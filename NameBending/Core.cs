@@ -76,6 +76,7 @@ namespace NameBending
         long lastDesignationUpdate = 0;
 
         public List<TMP_FontAsset> CachedFontAssets = new List<TMP_FontAsset>();
+        public Shader CachedImageShader;
 
 
 
@@ -101,6 +102,7 @@ namespace NameBending
             titleComponent.DesignationType = DesignationType.Title;
 
             nameComponent.Owner = player;
+            titleComponent.Owner = player;
         }
 
         public void ApplyComponentsToPlate(Il2CppRUMBLE.Players.Player player)
@@ -170,6 +172,7 @@ namespace NameBending
             isDebugMode = debugging.CreateEntry<bool>("DebugMode", false);
 
             loadFonts();
+            loadShader();
             Instance = this;
             readDesignationFiles();
         }
@@ -220,8 +223,8 @@ namespace NameBending
 
             if (PhotonNetwork.InRoom)
             {
-                if (ActiveNameVariation != null) AddLocalProp("Name", ActiveNameVariation);
-                if (ActiveNameVariation != null) AddLocalProp("Title", ActiveTitleVariation);
+                if (ActiveNameVariation != null) MelonCoroutines.Start(AddLocalProp("Name", ActiveNameVariation));
+                if (ActiveNameVariation != null) MelonCoroutines.Start(AddLocalProp("Title", ActiveTitleVariation));
             }
 
             lastDesignationUpdate = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
@@ -377,7 +380,8 @@ namespace NameBending
                     if (variation.Images != null)
                         foreach (ImageInfo imageInfo in variation.Images)
                         {
-                            MelonCoroutines.Start(imageInfo.DownloadImage());
+                            if (imageInfo.DownloadCoroutine != null) MelonCoroutines.Stop(imageInfo.DownloadCoroutine);
+                            imageInfo.DownloadCoroutine = MelonCoroutines.Start(imageInfo.DownloadImage());
                         }
             }
             catch (JsonException e)
@@ -428,7 +432,7 @@ namespace NameBending
                     "HighwayGothic"
                 })
                 {
-                    Font newFont = Calls.LoadAssetFromStream<Font>(this, "NameBending.assets.fonts", fontName);
+                    Font newFont = Calls.LoadAssetFromStream<Font>(this, "NameBending.assets.namebending", fontName);
                     TMP_FontAsset tmpFontAsset = TMP_FontAsset.CreateFontAsset(newFont);
                     tmpFontAsset.hideFlags = HideFlags.HideAndDontSave;
                     tmpFontAsset.name = fontName;
@@ -443,6 +447,13 @@ namespace NameBending
             }
 
             CachedFontAssets = fontAssets;
+        }
+
+        void loadShader()
+        {
+            Shader imageShader = Calls.LoadAssetFromStream<Shader>(this, "NameBending.assets.namebending", "SimpleRGBA");
+            imageShader.hideFlags = HideFlags.HideAndDontSave;
+            CachedImageShader = imageShader;
         }
 
         public IEnumerator AddLocalProp(string type, Variation variation)
