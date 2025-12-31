@@ -14,6 +14,9 @@ using static NameBending.Core;
 using ThreeDISevenZeroR.UnityGifDecoder;
 using ThreeDISevenZeroR.UnityGifDecoder.Model;
 using UnityEngine.Playables;
+using Il2CppSystem.Linq.Expressions;
+using Microsoft.Extensions.Primitives;
+using Il2CppInterop.Generator.Passes;
 
 namespace NameBending
 {
@@ -58,11 +61,20 @@ namespace NameBending
         [JsonProperty("interpolation")]
         public bool Interpolation = false;
 
+        [JsonProperty("fields")]
+        private Dictionary<string, string> fields;
+
+        [JsonIgnore]
+        public List<TypedField> TypedFields => GenerateTypedFields(fields);
+
         [JsonProperty("frames")]
         public Dictionary<int, string> Frames;
 
         [JsonProperty("fonts")]
         public Dictionary<int, string> Fonts;
+
+        [JsonProperty("depths")]
+        public Dictionary<int, string> Depths;
 
         [JsonProperty("images")]
         public List<ImageInfo> Images;
@@ -74,6 +86,23 @@ namespace NameBending
 
         [JsonIgnore]
         public Player Owner; // To be set manually after deserialization
+
+        static List<TypedField> GenerateTypedFields(Dictionary<string, string> fields)
+        {
+            List<TypedField> typedFields = new List<TypedField>();
+
+            foreach (var field in fields)
+            {
+                if (field.Value == "true") typedFields.Add(new TypedField(field.Key, true));
+                else if (field.Value == "false") typedFields.Add(new TypedField(field.Key, false));
+
+                else if (float.TryParse(field.Value, out var numberValue)) typedFields.Add(new TypedField(field.Key, numberValue));
+
+                else typedFields.Add(new TypedField(field.Key, field.Value));
+            }
+
+            return typedFields;
+        }
 
         public int FindLargestModifier()
         {
@@ -126,10 +155,24 @@ namespace NameBending
 
         public int FindPrevModifierOfType(string type, int index, bool isLoop)
         {
-            Dictionary<int, string> dict = type == "font" ? Fonts : Frames;
+            Dictionary<int, string> dict;
+            switch (type)
+            {
+                case "frame":
+                    dict = Frames;
+                    break;
+                case "font":
+                    dict = Fonts;
+                    break;
+                case "depth":
+                    dict = Depths;
+                    break;
+                default: return -1;
+            }
+            if (dict == null) return -1;
+
             int checkCount = 0;
             int indexRange = FindTotalFrameCount();
-
             while (true)
             {
                 if (dict.ContainsKey(index))
@@ -160,10 +203,24 @@ namespace NameBending
 
         public int FindNextModifierOfType(string type, int index, bool isLoop)
         {
-            Dictionary<int, string> dict = type == "font" ? Fonts : Frames;
+            Dictionary<int, string> dict;
+            switch (type)
+            {
+                case "frame":
+                    dict = Frames;
+                    break;
+                case "font":
+                    dict = Fonts;
+                    break;
+                case "depth":
+                    dict = Depths;
+                    break;
+                default: return -1;
+            }
+            if (dict == null) return -1;
+
             int checkCount = 0;
             int indexRange = FindTotalFrameCount();
-
             index++;
             while (!dict.ContainsKey(index))
             {
@@ -248,6 +305,44 @@ namespace NameBending
         }
     }
 
+    public class TypedField
+    {
+        public enum FieldType
+        {
+            Boolean = 0,
+            Number = 1,
+            String = 2
+        }
+
+        public string Identifier;
+        public FieldType CurrentFieldType;
+
+        public bool BooleanValue;
+        public float NumberValue;
+        public string StringValue;
+
+        public TypedField(string identifier, bool booleanValue)
+        {
+            CurrentFieldType = FieldType.Boolean;
+            Identifier = identifier;
+            BooleanValue = booleanValue;
+        }
+
+        public TypedField(string identifier, float numberValue)
+        {
+            CurrentFieldType = FieldType.Number;
+            Identifier = identifier;
+            NumberValue = numberValue;
+        }
+
+        public TypedField(string identifier, string stringValue)
+        {
+            CurrentFieldType = FieldType.String;
+            Identifier = identifier;
+            StringValue = stringValue;
+        }
+    }
+
     [Serializable]
     public class ImageInfo
     {
@@ -266,21 +361,39 @@ namespace NameBending
         [JsonProperty("w")]
         private float? _width = null;
 
-        [JsonIgnore]
-        public List<Texture2D> Textures = new List<Texture2D>();
+        [JsonProperty("z")]
+        public float? ZDepth = null;
 
         [JsonIgnore]
-        public Texture2D Texture
+        public List<FrameData> Frames = new List<FrameData>();
+
+        [JsonIgnore]
+        public float GifDuration => Frames.Last().GetTimestamp() + Frames.Last().Delay;
+
+        [JsonIgnore]
+        public Texture2D Texture // The texture of the first frame
         {
             get
             {
-                if (Textures.Count == 0) return Texture2D.whiteTexture;
-                return Textures[0] ?? Texture2D.whiteTexture;
+                if (Frames.Count == 0) return Texture2D.whiteTexture;
+                return Frames[0]?.Texture ?? Texture2D.whiteTexture;
+            }
+            set
+            {
+                Frames.Clear();
+                Frames.Add(new FrameData { Texture = value, HolderList = Frames });
             }
         }
 
         [JsonIgnore]
         public bool isGIF = false;
+        [JsonIgnore]
+        public bool DoLooping = true;
+
+        [JsonIgnore]
+        public bool Censored = true;
+        [JsonIgnore]
+        public bool ForceUncensor = false;
 
         [JsonIgnore]
         public bool TextureDownloaded = false;
@@ -323,6 +436,25 @@ namespace NameBending
 
         public IEnumerator DownloadImage()
         {
+            UndownloadImage();
+
+            if (!FindLinkTrust(Link) && !ForceUncensor)
+            {
+                Frames.Add(new FrameData
+                {
+                    Texture = Core.Instance.CachedCensoredTexture,
+                    HolderList = Frames
+                });
+
+                TextureDownloaded = true;
+                Censored = true;
+                yield break;
+            }
+            else
+            {
+                Censored = false;
+            }
+
             UnityWebRequest uwr = UnityWebRequest.Get(Link);
             yield return uwr.SendWebRequest();
 
@@ -336,27 +468,100 @@ namespace NameBending
             byte[] imageBytes = uwr.downloadHandler.data;
             uwr.Dispose();
 
-            Textures.Clear();
-
             isGIF = Link.ToLower().EndsWith(".gif");
-
-            if (isGIF)
+            if (isGIF) // Add all textures to Frames list
             {
-                
+                Frames.AddRange(HelperFunctions.ConvertGifToList(imageBytes));
+                foreach (FrameData frame in Frames) frame.HolderList = Frames;
             }
-            else
+            else // Add image texture to first item of Frames list
             {
-                var tex = new Texture2D(2, 2, TextureFormat.RGBA32, false);
+                var tex = new Texture2D(2, 2, TextureFormat.RGBA32, true);
+                tex.name = Link;
                 if (!tex.LoadImage(imageBytes))
                 {
                     MelonLogger.Error($"Failed to create texture from downloaded data: {Link}");
                     TextureDownloaded = false;
                     yield break;
                 }
-                Textures.Add(tex);
+                Frames.Add(new FrameData
+                {
+                    Texture = tex,
+                    HolderList = Frames
+                });
             }
 
             TextureDownloaded = true;
+        }
+
+        public void UndownloadImage()
+        {
+            Frames.Clear();
+            TextureDownloaded = false;
+            isGIF = false;
+        }
+
+        public static bool FindLinkTrust(string link)
+        {
+            List<string> trustedLinks = new List<string>
+            {
+                "imgur.com",
+                "i.imgur.com"
+            };
+
+            if (string.IsNullOrWhiteSpace(link))
+                return false;
+
+            try
+            {
+                var uri = new Uri(link);
+                foreach (string trustedLink in trustedLinks)
+                {
+                    if (uri.Host.Equals(trustedLink, StringComparison.OrdinalIgnoreCase))
+                        return true;
+                }
+            }
+            catch
+            {
+                // Invalid URL
+                return false;
+            }
+
+            return false;
+        }
+
+        public ImageInfo GetLoadingGif()
+        {
+            return new ImageInfo
+            {
+                Link = Link,
+                XOffset = XOffset,
+                YOffset = YOffset,
+                _height = Height,
+                _width = Width,
+
+                TextureDownloaded = true,
+                isGIF = true,
+                DoLooping = true,
+                Frames = Core.Instance.CachedLoadingFrames
+            };
+        }
+    }
+
+    public class FrameData
+    {
+        public Texture2D Texture;
+        public int Index = 0;
+        public float Delay = 0.001f;
+        public List<FrameData> HolderList;
+
+        public float GetTimestamp()
+        {
+            if (HolderList == null) return 0f;
+
+            float timestamp = 0;
+            for (int i = 0; i < Index; i++) timestamp += HolderList[i].Delay;
+            return timestamp;
         }
     }
 }

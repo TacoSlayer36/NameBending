@@ -17,6 +17,8 @@ using System.Collections;
 using Il2CppPhoton.Realtime;
 using HarmonyLib;
 using static Il2CppRootMotion.FinalIK.GrounderQuadruped;
+using MelonLoader.Logging;
+using AssetsTools.NET;
 
 [assembly: MelonInfo(typeof(NameBending.Core), NameBending.BuildInfo.Name, NameBending.BuildInfo.Version, NameBending.BuildInfo.Author)]
 [assembly: MelonGame("Buckethead Entertainment", "RUMBLE")]
@@ -55,8 +57,6 @@ namespace NameBending
         public bool HasNameConfigFile = false;
         public bool HasTitleConfigFile = false;
 
-        const int updateCooldown = 3000;
-
         public Root NameRoot = null;
         public Root TitleRoot = null;
 
@@ -76,9 +76,11 @@ namespace NameBending
         long lastDesignationUpdate = 0;
 
         public List<TMP_FontAsset> CachedFontAssets = new List<TMP_FontAsset>();
+        
         public Shader CachedImageShader;
-
-
+        public List<FrameData> CachedLoadingFrames;
+        public Texture2D CachedCensoredTexture;
+        public Texture2D CachedLoadingTexture;
 
 
         [HarmonyPatch(typeof(PlayerController), "Initialize", new Type[] { typeof(Il2CppRUMBLE.Players.Player) })]
@@ -196,16 +198,9 @@ namespace NameBending
             {
                 long cooldown = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() - lastDesignationUpdate;
 
-                if ((cooldown > updateCooldown) || !PhotonNetwork.InRoom)
-                {
-                    LoggerInstance.Msg("Updating your name and title...");
-                    readDesignationFiles();
-                    UpdateDesignations();
-                }
-                else
-                {
-                    LoggerInstance.Error($"Wait {((double)(updateCooldown - cooldown) / 1000).ToString("F2")} seconds before updating name and title again");
-                }
+                LoggerInstance.Msg("Updating your name and title...");
+                readDesignationFiles();
+                UpdateDesignations();
             }
         }
 
@@ -380,6 +375,7 @@ namespace NameBending
                     if (variation.Images != null)
                         foreach (ImageInfo imageInfo in variation.Images)
                         {
+                            imageInfo.DoLooping = variation.LoopFrames;
                             if (imageInfo.DownloadCoroutine != null) MelonCoroutines.Stop(imageInfo.DownloadCoroutine);
                             imageInfo.DownloadCoroutine = MelonCoroutines.Start(imageInfo.DownloadImage());
                         }
@@ -444,6 +440,25 @@ namespace NameBending
             catch (Exception ex)
             {
                 LoggerInstance.Error($"Error loading fonts: {ex.Message}");
+            }
+
+            try
+            {
+                CachedLoadingTexture = Calls.LoadAssetFromStream<Texture2D>(this, "NameBending.assets.namebending", "LoadingTexture");
+                CachedCensoredTexture = Calls.LoadAssetFromStream<Texture2D>(this, "NameBending.assets.namebending", "CensoredTexture");
+                CachedLoadingFrames = HelperFunctions.ConvertGifToList(Calls.LoadAssetFromStream<TextAsset>(this, "NameBending.assets.namebending", "LoadingGif").bytes);
+
+                CachedLoadingTexture.hideFlags = HideFlags.HideAndDontSave;
+                CachedCensoredTexture.hideFlags = HideFlags.HideAndDontSave;
+                foreach (FrameData frame in CachedLoadingFrames)
+                {
+                    frame.Texture.hideFlags = HideFlags.HideAndDontSave;
+                    frame.HolderList = CachedLoadingFrames;
+                }
+            }
+            catch (Exception ex)
+            {
+                LoggerInstance.Error($"Error loading built-in textures: {ex.Message}");
             }
 
             CachedFontAssets = fontAssets;

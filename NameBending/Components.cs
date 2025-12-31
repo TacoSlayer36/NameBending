@@ -13,6 +13,8 @@ using System.Text.RegularExpressions;
 using System.Linq;
 using System.Collections;
 using Tomlet.Exceptions;
+using UnityEngine.Rendering.Universal;
+using Il2CppSystem.Data;
 
 namespace NameBending
 {
@@ -48,18 +50,6 @@ namespace NameBending
         void OnDestroy()
         {
             Core.Instance.OnUpdateDesignations -= onUpdateDesignations;
-        }
-
-        void Update()
-        {
-            if (Input.GetKeyDown(KeyCode.I))
-            {
-                foreach (BentImage bentImage in BentImages)
-                {
-                    object newRoutine = MelonCoroutines.Start(bentImage.SetTexture());
-                    bentImage.SetTextureRoutine = newRoutine;
-                }
-            }
         }
 
         void FixedUpdate()
@@ -103,6 +93,7 @@ namespace NameBending
                 string fetchedVariation = photonOwner.CustomProperties["NameBending." + typeString].ToString();
                 Variation = JsonConvert.DeserializeObject<Variation>(fetchedVariation);
 
+                // TODO
                 //if (ModUISettings.SaveNamesToFiles && !Variation.ProhibitCaching)
                 //    cacheVariation(Variation);
             }
@@ -118,17 +109,9 @@ namespace NameBending
         {
             if (Variation?.Images != null && Variation.Images.Count > 0)
             {
-                foreach (ImageInfo imageInfo in Variation.Images)
-                {
-                    CreateImageObject(imageInfo, Variation);
-                }
+                foreach (ImageInfo imageInfo in Variation.Images) CreateImageObject(imageInfo, Variation);
             }
-
-            foreach (BentImage bentImage in BentImages)
-            {
-                object newRoutine = MelonCoroutines.Start(bentImage.SetTexture());
-                bentImage.SetTextureRoutine = newRoutine;
-            }
+            foreach (BentImage bentImage in BentImages) bentImage.RestartFrames();
         }
 
         private void CreateImageObject(ImageInfo imageInfo, Variation containerVariation)
@@ -139,21 +122,20 @@ namespace NameBending
             planeGO.transform.SetParent(this.transform, false);
 
             // Set position and scale from ImageInfo
-            planeGO.transform.localPosition = new Vector3(imageInfo.XOffset / 100f, imageInfo.YOffset / 100f, (containerVariation.GetImageInfoIndex(imageInfo) + 1) * -0.001f);
+            float zDepth = (containerVariation.GetImageInfoIndex(imageInfo) + 1) * -0.0015f;
+            if (imageInfo.ZDepth != null) zDepth = (float)imageInfo.ZDepth * -0.0015f;
+            planeGO.transform.localPosition = new Vector3(imageInfo.XOffset / 100f, imageInfo.YOffset / 100f, zDepth);
             planeGO.transform.localScale = new Vector3(imageInfo.Width / 1000, 1f, imageInfo.Height / 1000);
             planeGO.transform.localRotation *= Quaternion.Euler(90f, 180f, 0f);
 
             Material mat = new Material(Core.Instance.CachedImageShader);
-            mat.mainTexture = Texture2D.whiteTexture;
+            mat.mainTexture = Core.Instance.CachedLoadingTexture;
             planeGO.GetComponent<Renderer>().material = mat;
 
             // Track the image for later reset
-            BentImage bentImage = new BentImage
-            {
-                ImageInfo = imageInfo,
-                GameObject = planeGO
-            };
-            BentImages.Add(bentImage);
+            BentImage newBentImage = planeGO.AddComponent<BentImage>();
+            newBentImage.ImageInfo = imageInfo;
+            BentImages.Add(newBentImage);
         }
 
         void cacheVariation(Variation variation)
@@ -193,15 +175,37 @@ namespace NameBending
             try
             {
                 int prevModifier = Variation.FindPrevModifierOfType("font", frameIndex);
-                if (Variation.Fonts.ContainsKey(prevModifier))
+                if (prevModifier == -1) SetFont(getFontFromName("GoodDogPlain"));
+
+                if (Variation.Fonts != null)
                 {
-                    SetFont(Variation.Fonts[prevModifier]);
+                    if (Variation.Fonts.ContainsKey(prevModifier))
+                    {
+                        SetFont(Variation.Fonts[prevModifier]);
+                    }
                 }
             }
             catch
+            { }
+            try
             {
-                SetFont(getFontFromName("GoodDogPlain"));
+                int prevModifier = Variation.FindPrevModifierOfType("depth", frameIndex);
+                if (Variation.Depths != null && Variation.Depths.ContainsKey(prevModifier))
+                {
+                    string depth = Variation.Depths[prevModifier];
+                    float depthFloat = 0f;
+                    if (Variation.Interpolation)
+                    {
+                        depthFloat = Mathf.Lerp(float.Parse(depth), float.Parse(Variation.Depths[Variation.FindNextModifierOfType("depth", frameIndex)]), frameProgress);
+                    }
+                    else
+                    {
+                        depthFloat = float.Parse(depth);
+                    }
+                    SetDepth(depthFloat);
+                }
             }
+            catch { }
         }
 
         public void SetText(string text)
@@ -242,6 +246,11 @@ namespace NameBending
             {
                 SetFont(font);
             }
+        }
+
+        public void SetDepth(float depth)
+        {
+            transform.localPosition = new Vector3(transform.localPosition.x, transform.localPosition.y, depth / 10f);
         }
 
         public void ResetText()
@@ -399,28 +408,74 @@ namespace NameBending
         }
     }
 
-    public class BentImage
+    [RegisterTypeInIl2Cpp]
+    public class BentImage : MonoBehaviour
     {
         public ImageInfo ImageInfo;
-        public GameObject GameObject;
         public object SetTextureRoutine;
         public bool IsReset = false;
+        float timer = 0f;
+        int currentFrameIndex = 0;
+        Material material => GetComponent<Renderer>().material;
+
+        public void Update()
+        {
+            if (Input.GetKeyDown(KeyCode.I)) Censor();
+            if (Input.GetKeyDown(KeyCode.O)) Uncensor();
+
+            ImageInfo imageInfoToUse = ImageInfo;
+            if (!imageInfoToUse.TextureDownloaded)
+            {
+                imageInfoToUse = ImageInfo.GetLoadingGif();
+            }
+
+            if (imageInfoToUse.isGIF)
+            {
+                timer += Time.deltaTime;
+                if (timer > imageInfoToUse.GifDuration)
+                {
+                    timer = 0f;
+                    currentFrameIndex = 0;
+                }
+
+                for (int i = currentFrameIndex; i < imageInfoToUse.Frames.Count; i++)
+                {
+                    FrameData frame = imageInfoToUse.Frames[i];
+
+                    if (frame.GetTimestamp() < timer && frame.Index > currentFrameIndex)
+                    {
+                        currentFrameIndex = frame.Index;
+                        material.mainTexture = imageInfoToUse.Frames[currentFrameIndex].Texture;
+                        break;
+                    }
+                }
+            }
+        }
 
         public void Reset()
         {
-            try
-            {
-                GameObject.Destroy(GameObject);
-            }
-            catch { }
+            if (Input.GetKeyDown(KeyCode.Escape) && Input.GetKeyUp(KeyCode.Escape)) Update();
+
             if (SetTextureRoutine != null)
             {
                 MelonCoroutines.Stop(SetTextureRoutine);
             }
             IsReset = true;
+
+            try
+            {
+                GameObject.Destroy(gameObject);
+            }
+            catch { }
         }
 
-        public IEnumerator SetTexture()
+        public void RestartFrames()
+        {
+            SetTextureRoutine = MelonCoroutines.Start(SetTextureWhenAvailable(0));
+            timer = 0f;
+        }
+
+        public IEnumerator SetTextureWhenAvailable(int index)
         {
             int tries = 0;
             while (!ImageInfo.TextureDownloaded)
@@ -428,7 +483,34 @@ namespace NameBending
                 if (tries++ >= 500) yield break;
                 yield return new WaitForSeconds(0.1f);
             }
-            GameObject.GetComponent<Renderer>().material.mainTexture = ImageInfo.Texture;
+            if (!ImageInfo.isGIF) material.mainTexture = ImageInfo.Texture;
+            else material.mainTexture = ImageInfo.Frames[index].Texture;
+        }
+
+        public void Censor()
+        {
+            ImageInfo.UndownloadImage();
+
+            ImageInfo.Censored = true;
+            ImageInfo.ForceUncensor = false;
+
+            ImageInfo.Texture = Core.Instance.CachedCensoredTexture;
+            ImageInfo.TextureDownloaded = true;
+
+            RestartFrames();
+        }
+
+        public void Uncensor()
+        {
+            ImageInfo.UndownloadImage();
+
+            ImageInfo.Censored = false;
+            ImageInfo.ForceUncensor = true;
+
+            if (ImageInfo.DownloadCoroutine != null) MelonCoroutines.Stop(ImageInfo.DownloadCoroutine);
+            ImageInfo.DownloadCoroutine = MelonCoroutines.Start(ImageInfo.DownloadImage());
+
+            RestartFrames();
         }
     }
 }
