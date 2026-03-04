@@ -1,5 +1,4 @@
 ﻿using MelonLoader;
-using MelonLoader.TinyJSON;
 using Newtonsoft.Json;
 using RumbleModUI;
 using UnityEngine;
@@ -8,17 +7,14 @@ using Il2CppTMPro;
 using RumbleModdingAPI;
 using System.Collections.Generic;
 using System;
-using Il2CppRUMBLE.Environment;
 using Il2CppRUMBLE.Players;
 using Il2CppRUMBLE.Managers;
 using System.Linq;
 using Il2CppPhoton.Pun;
 using System.Collections;
-using Il2CppPhoton.Realtime;
 using HarmonyLib;
-using static Il2CppRootMotion.FinalIK.GrounderQuadruped;
-using MelonLoader.Logging;
-using AssetsTools.NET;
+using UnityEngine.UI;
+using Il2CppRUMBLE.Players.Subsystems;
 
 [assembly: MelonInfo(typeof(NameBending.Core), NameBending.BuildInfo.Name, NameBending.BuildInfo.Version, NameBending.BuildInfo.Author)]
 [assembly: MelonGame("Buckethead Entertainment", "RUMBLE")]
@@ -35,14 +31,19 @@ namespace NameBending
         public const string Description = "Change your name and title to anything you like";
     }
 
-    public class Core : MelonMod
+    public partial class Core : MelonMod
     {
         public static Core Instance;
         public Mod Mod = new Mod();
         public string ModFolder = "NameBending";
         private MelonPreferences_Category debugging;
         private MelonPreferences_Entry<bool> isDebugMode;
+        string sceneName => RumbleModdingAPI.RMAPI.Calls.Scene.GetSceneName();
 
+        public GameObject ParentObject;
+        public GameObject localNameplateImageObject;
+        public GameObject LocalNameplateClone;
+        public RawImage LocalRawNameplateImage;
         bool globalInit = false;
 
         public enum DesignationType
@@ -82,6 +83,8 @@ namespace NameBending
         public Texture2D CachedCensoredTexture;
         public Texture2D CachedLoadingTexture;
 
+        public GameObject PlatePreviewCanvas;
+
 
         [HarmonyPatch(typeof(PlayerController), "Initialize", new Type[] { typeof(Il2CppRUMBLE.Players.Player) })]
         public static class playerspawn
@@ -97,7 +100,7 @@ namespace NameBending
             NameBend nameComponent = plate.transform.GetChild(0).gameObject.AddComponent<NameBend>();
             NameBend titleComponent = plate.transform.GetChild(2).gameObject.AddComponent<NameBend>();
 
-            bool isLocal = player.Controller.controllerType == ControllerType.Local;
+            bool isLocal = player.Controller.controllerType == Il2CppRUMBLE.Players.ControllerType.Local;
             nameComponent.IsLocal = isLocal;
             titleComponent.IsLocal = isLocal;
             nameComponent.DesignationType = DesignationType.Name;
@@ -168,7 +171,7 @@ namespace NameBending
         public override void OnLateInitializeMelon()
         {
             UI.instance.UI_Initialized += OnUIInit;
-            Calls.onMapInitialized += sceneReady;
+            RumbleModdingAPI.RMAPI.Actions.onMapInitialized += sceneReady;
 
             debugging = MelonPreferences.CreateCategory("Debugging");
             isDebugMode = debugging.CreateEntry<bool>("DebugMode", false);
@@ -177,14 +180,18 @@ namespace NameBending
             loadShader();
             Instance = this;
             readDesignationFiles();
+
+            hasMatchInfo = RumbleModdingAPI.RMAPI.Calls.Mods.findOwnMod("MatchInfo", "2.1.2", false);
         }
 
-        void sceneReady()
+        void sceneReady(string _)
         {
-            if (Calls.Scene.GetSceneName() == "Gym")
+            if (RumbleModdingAPI.RMAPI.Calls.Scene.GetSceneName() == "Gym")
             {
                 globalInit = true;
-                ApplyComponentsToPlate(Calls.GameObjects.Gym.LOGIC.DressingRoom.PreviewPlayerController.NameTag.GetGameObject(), PlayerManager.Instance.LocalPlayer);
+                ParentObject = new GameObject("NameBending");
+                GameObject.DontDestroyOnLoad(ParentObject);
+                ApplyComponentsToPlate(RumbleModdingAPI.RMAPI.GameObjects.Gym.INTERACTABLES.DressingRoom.PreviewPlayerController.NameTag.GetGameObject(), PlayerManager.Instance.LocalPlayer);
             }
 
             UpdateDesignations();
@@ -428,7 +435,7 @@ namespace NameBending
                     "HighwayGothic"
                 })
                 {
-                    Font newFont = Calls.LoadAssetFromStream<Font>(this, "NameBending.assets.namebending", fontName);
+                    Font newFont = RumbleModdingAPI.RMAPI.AssetBundles.LoadAssetFromStream<Font>(this, "NameBending.assets.namebending", fontName);
                     TMP_FontAsset tmpFontAsset = TMP_FontAsset.CreateFontAsset(newFont);
                     tmpFontAsset.hideFlags = HideFlags.HideAndDontSave;
                     tmpFontAsset.name = fontName;
@@ -444,9 +451,9 @@ namespace NameBending
 
             try
             {
-                CachedLoadingTexture = Calls.LoadAssetFromStream<Texture2D>(this, "NameBending.assets.namebending", "LoadingTexture");
-                CachedCensoredTexture = Calls.LoadAssetFromStream<Texture2D>(this, "NameBending.assets.namebending", "CensoredTexture");
-                CachedLoadingFrames = HelperFunctions.ConvertGifToList(Calls.LoadAssetFromStream<TextAsset>(this, "NameBending.assets.namebending", "LoadingGif").bytes);
+                CachedLoadingTexture = RumbleModdingAPI.RMAPI.AssetBundles.LoadAssetFromStream<Texture2D>(this, "NameBending.assets.namebending", "LoadingTexture");
+                CachedCensoredTexture = RumbleModdingAPI.RMAPI.AssetBundles.LoadAssetFromStream<Texture2D>(this, "NameBending.assets.namebending", "CensoredTexture");
+                CachedLoadingFrames = HelperFunctions.ConvertGifToList(RumbleModdingAPI.RMAPI.AssetBundles.LoadAssetFromStream<TextAsset>(this, "NameBending.assets.namebending", "LoadingGif").bytes);
 
                 CachedLoadingTexture.hideFlags = HideFlags.HideAndDontSave;
                 CachedCensoredTexture.hideFlags = HideFlags.HideAndDontSave;
@@ -466,7 +473,7 @@ namespace NameBending
 
         void loadShader()
         {
-            Shader imageShader = Calls.LoadAssetFromStream<Shader>(this, "NameBending.assets.namebending", "SimpleRGBA");
+            Shader imageShader = RumbleModdingAPI.RMAPI.AssetBundles.LoadAssetFromStream<Shader>(this, "NameBending.assets.namebending", "SimpleRGBA");
             imageShader.hideFlags = HideFlags.HideAndDontSave;
             CachedImageShader = imageShader;
         }
@@ -523,34 +530,42 @@ namespace NameBending
             return cachedConfigHashes;
         }
 
-        public void OnUIInit()
+        public void CreatePlatePreview()
         {
-            Mod.ModName = BuildInfo.Name;
-            Mod.ModVersion = BuildInfo.Version;
-            Mod.SetFolder("NameBending");
-            Mod.AddDescription("Description", "", BuildInfo.Description, new Tags { IsSummary = true });
+            GameObject localNameplateCamera = new GameObject("Local Nameplate Camera");
+            localNameplateCamera.transform.SetParent(ParentObject.transform);
+            Camera meshCamera = localNameplateCamera.AddComponent<Camera>();
+            meshCamera.clearFlags = CameraClearFlags.SolidColor;
+            meshCamera.backgroundColor = new Color(0, 0, 0, 0);
 
-            Mod.AddToList("<#08F>Name Plate Preview", true, 0, "Enable a preview of your bent nameplate", new Tags());
-            Mod.AddToList("<#0BB>My Custom Name", true, 0, "Bend your name", new Tags());
-            Mod.AddToList("<#0BB>My Custom Title", true, 0, "Bend your title", new Tags());
-            Mod.AddToList("<#0BB>My Alt Name", true, 0, "Others will see the name specified under \"altText\" in the settings file when they don't have the mod\nThis might require a restart", new Tags());
-            Mod.AddToList("<#B09>Others' Custom Names", true, 0, "See others' bent names", new Tags());
-            Mod.AddToList("<#B09>Others' Custom Titles", true, 0, "See others' bent titles", new Tags());
-            Mod.AddToList("<#B09>Animations", true, 0, "Name and title animations will be visible", new Tags());
-            Mod.AddToList("<#B09>Truncation Length", -1, "Max number of characters to show on names and titles\n(set to -1 to disable)", new Tags());
-            Mod.AddToList("<#888>MatchInfo Name Plates", true, 0, "Show fully customized name plates on the MatchInfo sign", new Tags());
-            Mod.AddToList("<#888>Save Names to Files", true, 0, "Saves any name or title you come across to UserData/NameBending/saved_names", new Tags());
-            Mod.AddToList("<#888>Disable Refresh Shortcut", false, 0, "Disables pressing N to update names and titles", new Tags());
+            RenderTexture renderTexture = new RenderTexture(512, 512, 16);
+            renderTexture.Create();
+            meshCamera.targetTexture = renderTexture;
+            meshCamera.orthographic = false;
+            meshCamera.transform.position = new Vector3(0, -1000, 1);
+            meshCamera.transform.rotation = Quaternion.Euler(0, 180, 0);
 
-            Mod.GetFromFile();
-            Mod.ModSaved += OnUISave;
+            GameObject nameplate = PlayerManager.Instance.LocalPlayer.Controller.transform.Find("NameTag").gameObject;
+            LocalNameplateClone = GameObject.Instantiate(nameplate);
+            LocalNameplateClone.transform.SetParent(ParentObject.transform);
+            LocalNameplateClone.active = true;
+            LocalNameplateClone.transform.position = new Vector3(0, -1000, 0);
 
-            UI.instance.AddMod(Mod);
-        }
+            LocalRawNameplateImage.texture = renderTexture;
 
-        public void OnUISave()
-        {
-            
+            RectTransform rectTransform = localNameplateImageObject.GetComponent<RectTransform>();
+            rectTransform.sizeDelta = new Vector2(300, 300);
+            rectTransform.anchoredPosition = new Vector2(180, -90);
+            rectTransform.anchorMax = new Vector2(0, 1);
+            rectTransform.anchorMin = new Vector2(0, 1);
+            rectTransform.pivot = new Vector2(0.5f, 0.5f);
+
+            LocalNameplateClone.active = true;
+
+            PlayerNameTag nameTag = LocalNameplateClone.GetComponent<PlayerNameTag>();
+            nameTag.followTarget = null;
+            nameTag.parentController = PlayerManager.Instance.LocalPlayer.Controller;
+            nameTag.RefreshNameTag();
         }
 
         public void Log(string message, bool debugOnly = false, int logLevel = 0)
@@ -571,20 +586,5 @@ namespace NameBending
                     break;
             }
         }
-    }
-
-    public static class ModUISettings
-    {
-        public static bool NamePlatePreview => (bool)Core.Instance.Mod.Settings[1].SavedValue;
-        public static bool MyCustomName => (bool)Core.Instance.Mod.Settings[2].SavedValue;
-        public static bool MyCustomTitle => (bool)Core.Instance.Mod.Settings[3].SavedValue;
-        public static bool MyAltName => (bool)Core.Instance.Mod.Settings[4].SavedValue;
-        public static bool OthersCustomNames => (bool)Core.Instance.Mod.Settings[5].SavedValue;
-        public static bool OthersCustomTitles => (bool)Core.Instance.Mod.Settings[6].SavedValue;
-        public static bool Animations => (bool)Core.Instance.Mod.Settings[7].SavedValue;
-        public static int TruncationLength => (int)Core.Instance.Mod.Settings[8].SavedValue;
-        public static bool MatchInfoNamePlates => (bool)Core.Instance.Mod.Settings[9].SavedValue;
-        public static bool SaveNamesToFiles => (bool)Core.Instance.Mod.Settings[10].SavedValue;
-        public static bool DisableRefreshShortcut => (bool)Core.Instance.Mod.Settings[11].SavedValue;
     }
 }

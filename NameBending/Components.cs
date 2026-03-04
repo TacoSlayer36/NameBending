@@ -15,6 +15,8 @@ using System.Collections;
 using Tomlet.Exceptions;
 using UnityEngine.Rendering.Universal;
 using Il2CppSystem.Data;
+using Il2CppPhoton.Voice;
+using System.Threading;
 
 namespace NameBending
 {
@@ -35,9 +37,10 @@ namespace NameBending
 
         public float Timer = 0f;
         private float frameDurationInSeconds => Variation.FrameDuration / 1000f;
-        private float animationProgress = 0;
-        private int frameIndex => (int)Math.Truncate(animationProgress);
-        private float frameProgress => animationProgress - frameIndex;
+        public float AnimationProgress = 0;
+        public int FrameIndex => (int)Math.Truncate(AnimationProgress);
+        public float FrameProgress => AnimationProgress - FrameIndex;
+        public float LoopProgress => AnimationProgress / (Variation.FindTotalFrameCount() * frameDurationInSeconds);
 
         private int steps = 0; // For slower fixed update
 
@@ -71,8 +74,6 @@ namespace NameBending
 
         void onUpdateDesignations()
         {
-            //if (gameObject == null) return;
-
             ResetAll();
             FetchVariation();
             ApplyImages();
@@ -90,13 +91,21 @@ namespace NameBending
             }
             else
             {
-                string fetchedVariation = photonOwner.CustomProperties["NameBending." + typeString].ToString();
-                Variation = JsonConvert.DeserializeObject<Variation>(fetchedVariation);
+                var fetchedVariation = photonOwner.CustomProperties["NameBending." + typeString];
+                string fetchedVariationString = null;
+                if (fetchedVariation != null)
+                {
+                    fetchedVariationString = fetchedVariation.ToString();
+                    Variation = JsonConvert.DeserializeObject<Variation>(fetchedVariationString);
+                }
 
                 // TODO
                 //if (ModUISettings.SaveNamesToFiles && !Variation.ProhibitCaching)
                 //    cacheVariation(Variation);
             }
+
+            if (Variation != null)
+                Variation.OwnerComponent = this;
         }
 
         public void ReapplyImages()
@@ -152,29 +161,30 @@ namespace NameBending
             if (frameDurationInSeconds > 0)
             {
                 if (Variation.LoopFrames)
-                    animationProgress = (Timer / frameDurationInSeconds) % Variation.FindTotalFrameCount();
+                    AnimationProgress = (Timer / frameDurationInSeconds) % Variation.FindTotalFrameCount();
                 else
-                    animationProgress = Math.Min(Timer / frameDurationInSeconds, Variation.FindLargestModifier());
+                    AnimationProgress = Math.Min(Timer / frameDurationInSeconds, Variation.FindLargestModifier());
             }
             else
             {
-                animationProgress = 0;
+                AnimationProgress = 0;
             }
 
             try
             {
-                int prevModifier = Variation.FindPrevModifierOfType("frame", frameIndex);
+                int prevModifier = Variation.FindPrevModifierOfType("frame", FrameIndex);
                 if (Variation.Frames.ContainsKey(prevModifier))
                 {
                     string frame = Variation.Frames[prevModifier];
-                    if (Variation.Interpolation) frame = interpolateFrames(frame, Variation.Frames[Variation.FindNextModifierOfType("frame", frameIndex)], frameProgress);
+                    if (Variation.EnableFields) frame = processFields(frame, Variation.TypedFields);
+                    //if (Variation.Interpolation) frame = interpolateFrames(frame, Variation.Frames[Variation.FindNextModifierOfType("frame", frameIndex)], frameProgress);
                     SetText(frame);
                 }
             }
             catch { }
             try
             {
-                int prevModifier = Variation.FindPrevModifierOfType("font", frameIndex);
+                int prevModifier = Variation.FindPrevModifierOfType("font", FrameIndex);
                 if (prevModifier == -1) SetFont(getFontFromName("GoodDogPlain"));
 
                 if (Variation.Fonts != null)
@@ -189,14 +199,14 @@ namespace NameBending
             { }
             try
             {
-                int prevModifier = Variation.FindPrevModifierOfType("depth", frameIndex);
+                int prevModifier = Variation.FindPrevModifierOfType("depth", FrameIndex);
                 if (Variation.Depths != null && Variation.Depths.ContainsKey(prevModifier))
                 {
                     string depth = Variation.Depths[prevModifier];
                     float depthFloat = 0f;
                     if (Variation.Interpolation)
                     {
-                        depthFloat = Mathf.Lerp(float.Parse(depth), float.Parse(Variation.Depths[Variation.FindNextModifierOfType("depth", frameIndex)]), frameProgress);
+                        depthFloat = Mathf.Lerp(float.Parse(depth), float.Parse(Variation.Depths[Variation.FindNextModifierOfType("depth", FrameIndex)]), FrameProgress);
                     }
                     else
                     {
@@ -279,11 +289,44 @@ namespace NameBending
             ResetImages();
         }
 
+        string processFields(string inputFrame, List<TypedField> typedFields)
+        {
+            string pattern = "{([\\da-zA-Z_\\-]+)}";
+            var matches = Regex.Matches(inputFrame, pattern);
+            string outputFrame = "";
+
+            int lastIndex = 0;
+            foreach (Match match in matches)
+            {
+                if (match.Index > lastIndex)
+                {
+                    outputFrame += inputFrame.Substring(lastIndex, match.Index - lastIndex);
+                }
+
+                string group1 = match.Groups[1].Value;
+                var field = typedFields.FirstOrDefault(f => f.Identifier == group1);
+                if (field != null)
+                {
+                    outputFrame += field.GetValueAsString();
+                }
+                else
+                {
+                    outputFrame += match.Value;
+                }
+
+                lastIndex = match.Index + match.Length;
+            }
+
+            if (lastIndex < inputFrame.Length)
+            {
+                outputFrame += inputFrame.Substring(lastIndex);
+            }
+
+            return outputFrame;
+        }
+
         string interpolateFrames(string frame1, string frame2, float progress = 0f)
         {
-            //MelonLogger.Msg($"Frame 1: {frame1} | Frame 2: {frame2} | Progress: {progress}");
-            //MelonLogger.Msg(progress);
-
             string pattern = "{(\\d+):((-?\\d*((\\.\\d*)?))|(#[A-Fa-f0-9]+))}";
             var frame1Separated = separateNumbers(frame1, pattern);
             var frame2Separated = separateNumbers(frame2, pattern);

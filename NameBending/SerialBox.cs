@@ -17,6 +17,8 @@ using UnityEngine.Playables;
 using Il2CppSystem.Linq.Expressions;
 using Microsoft.Extensions.Primitives;
 using Il2CppInterop.Generator.Passes;
+using System.Collections.ObjectModel;
+using System.Runtime.CompilerServices;
 
 namespace NameBending
 {
@@ -34,6 +36,9 @@ namespace NameBending
     [Serializable]
     public class Variation
     {
+        [JsonIgnore]
+        public NameBend OwnerComponent;
+
         [JsonProperty("designationType")]
         public string DesignationType = "UNKNOWN"; // To be set manually after deserialization
 
@@ -61,11 +66,24 @@ namespace NameBending
         [JsonProperty("interpolation")]
         public bool Interpolation = false;
 
+        [JsonProperty("enableFields")]
+        public bool EnableFields = true;
+
         [JsonProperty("fields")]
         private Dictionary<string, string> fields;
 
         [JsonIgnore]
-        public List<TypedField> TypedFields => GenerateTypedFields(fields);
+        public List<TypedField> TypedFields
+        {
+            get
+            {
+                if (_typedFields == null) GenerateTypedFields();
+                return _typedFields;
+            }
+        }
+
+        [JsonIgnore]
+        List<TypedField> _typedFields;
 
         [JsonProperty("frames")]
         public Dictionary<int, string> Frames;
@@ -87,21 +105,29 @@ namespace NameBending
         [JsonIgnore]
         public Player Owner; // To be set manually after deserialization
 
-        static List<TypedField> GenerateTypedFields(Dictionary<string, string> fields)
+        public void GenerateTypedFields()
         {
             List<TypedField> typedFields = new List<TypedField>();
+            if (fields == null)
+            {
+                _typedFields = typedFields;
+                return;
+            }
 
             foreach (var field in fields)
             {
-                if (field.Value == "true") typedFields.Add(new TypedField(field.Key, true));
-                else if (field.Value == "false") typedFields.Add(new TypedField(field.Key, false));
+                // Boolean
+                if (field.Value == "true") typedFields.Add(new TypedField(field.Key, true) { OwnerComponent = OwnerComponent});
+                else if (field.Value == "false") typedFields.Add(new TypedField(field.Key, false) { OwnerComponent = OwnerComponent });
 
-                else if (float.TryParse(field.Value, out var numberValue)) typedFields.Add(new TypedField(field.Key, numberValue));
+                // Numbers
+                else if (float.TryParse(field.Value, out var numberValue)) typedFields.Add(new TypedField(field.Key, numberValue) { OwnerComponent = OwnerComponent });
 
-                else typedFields.Add(new TypedField(field.Key, field.Value));
+                // Strings
+                else typedFields.Add(new TypedField(field.Key, field.Value) { OwnerComponent = OwnerComponent });
             }
 
-            return typedFields;
+            _typedFields = typedFields;
         }
 
         public int FindLargestModifier()
@@ -307,6 +333,8 @@ namespace NameBending
 
     public class TypedField
     {
+        public NameBend OwnerComponent;
+
         public enum FieldType
         {
             Boolean = 0,
@@ -314,12 +342,116 @@ namespace NameBending
             String = 2
         }
 
+        public static ReadOnlyCollection<string> FactoryFields = new List<string>(){ "RANDOM", "FRAME_RANDOM", "FRAME_PROGRESS", "LOOP_PROGRESS", "FRAME", "TIMER" }.AsReadOnly();
+        public bool IsFactory => FactoryFields.Contains(StringValue.Split('|')[0]);
+
         public string Identifier;
         public FieldType CurrentFieldType;
 
         public bool BooleanValue;
         public float NumberValue;
         public string StringValue;
+
+        System.Random randy = new System.Random();
+        int prevFrameIndex = 0;
+        float lastOutput;
+
+        public string GetValueAsString()
+        {
+            if (!IsFactory)
+            {
+                switch (CurrentFieldType)
+                {
+                    case FieldType.Boolean: return BooleanValue.ToString();
+                    case FieldType.Number: return NumberValue.ToString();
+                    default: return StringValue;
+                }
+            }
+            else
+            {
+                var fieldParams = StringValue.Split('|');
+                string param1 = fieldParams[0];
+                float output = lastOutput;
+
+                bool doRemap = false;
+                bool doDilation = false;
+
+                if (param1 == "RANDOM" || (param1 == "FRAME_RANDOM" && OwnerComponent.FrameIndex != prevFrameIndex))
+                {
+                    prevFrameIndex = OwnerComponent.FrameIndex;
+                    output = (float)randy.NextDouble();
+                    doRemap = true;
+                }
+
+                if (param1 == "FRAME_PROGRESS")
+                {
+                    output = OwnerComponent.FrameProgress;
+                    doRemap = true;
+                }
+
+                if (param1 == "LOOP_PROGRESS")
+                {
+                    output = OwnerComponent.LoopProgress;
+                    doRemap = true;
+                }
+
+                if (param1 == "FRAME")
+                {
+                    output = OwnerComponent.FrameIndex;
+                    doDilation = true;
+                }
+
+                if (param1 == "TIMER")
+                {
+                    output = OwnerComponent.Timer;
+                    doDilation = true;
+                }
+
+                // Remap to fit the second and third parameters as a min and max respectively (Field|Min|Max)
+                if (doRemap)
+                {
+                    if (fieldParams.Length == 2)
+                    {
+                        if (float.TryParse(fieldParams[1], out float param2))
+                        {
+                            output += param2;
+                        }
+                    }
+                    else if (fieldParams.Length > 2)
+                    {
+                        if (float.TryParse(fieldParams[1], out float param2))
+                        {
+                            if (float.TryParse(fieldParams[2], out float param3))
+                            {
+                                output = Mathf.Lerp(param2, param3, output);
+                            }
+                        }
+                    }
+                }
+
+                // Remap with scale and offset (Field|Offset|Scale)
+                if (doDilation)
+                {
+                    if (fieldParams.Length > 2)
+                    {
+                        if (float.TryParse(fieldParams[2], out float param3))
+                        {
+                            output *= param3;
+                        }
+                    }
+                    if (fieldParams.Length > 1)
+                    {
+                        if (float.TryParse(fieldParams[1], out float param2))
+                        {
+                            output += param2;
+                        }
+                    }
+                }
+
+                lastOutput = output;
+                return output.ToString();
+            }
+        }
 
         public TypedField(string identifier, bool booleanValue)
         {
