@@ -4,7 +4,6 @@ using RumbleModUI;
 using UnityEngine;
 using System.IO;
 using Il2CppTMPro;
-using RumbleModdingAPI;
 using System.Collections.Generic;
 using System;
 using Il2CppRUMBLE.Players;
@@ -57,6 +56,9 @@ namespace NameBending
         public bool HasSimpleConfigFile = false;
         public bool HasNameConfigFile = false;
         public bool HasTitleConfigFile = false;
+
+        public const int FloatingPointPrecision = 5;
+        public const string FieldPattern = "{([\\da-zA-Z_\\-|.#]+)(=[^}]+)?}";
 
         public Root NameRoot = null;
         public Root TitleRoot = null;

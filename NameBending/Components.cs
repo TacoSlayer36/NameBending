@@ -17,6 +17,10 @@ using UnityEngine.Rendering.Universal;
 using Il2CppSystem.Data;
 using Il2CppPhoton.Voice;
 using System.Threading;
+using Il2CppSteamworks;
+using Microsoft.VisualBasic.FileIO;
+using static Il2CppSystem.Globalization.TimeSpanFormat;
+using ClipperLib;
 
 namespace NameBending
 {
@@ -75,6 +79,7 @@ namespace NameBending
         void onUpdateDesignations()
         {
             ResetAll();
+            Variation = null;
             FetchVariation();
             ApplyImages();
             Timer = 0f;
@@ -105,7 +110,10 @@ namespace NameBending
             }
 
             if (Variation != null)
+            {
                 Variation.OwnerComponent = this;
+                if (Variation.EnableFields) Variation.FindAllFieldInstances();
+            }
         }
 
         public void ReapplyImages()
@@ -172,12 +180,11 @@ namespace NameBending
 
             try
             {
-                int prevModifier = Variation.FindPrevModifierOfType("frame", FrameIndex);
-                if (Variation.Frames.ContainsKey(prevModifier))
+                int prevModifierIndex = Variation.FindPrevModifierOfType("frame", FrameIndex);
+                if (Variation.Frames.ContainsKey(prevModifierIndex))
                 {
-                    string frame = Variation.Frames[prevModifier];
-                    if (Variation.EnableFields) frame = processFields(frame, Variation.TypedFields);
-                    //if (Variation.Interpolation) frame = interpolateFrames(frame, Variation.Frames[Variation.FindNextModifierOfType("frame", frameIndex)], frameProgress);
+                    string frame = Variation.Frames[prevModifierIndex];
+                    if (Variation.EnableFields) frame = ProcessFields(prevModifierIndex, Variation);
                     SetText(frame);
                 }
             }
@@ -284,158 +291,51 @@ namespace NameBending
         }
         public void ResetAll()
         {
+            Variation = null;
             ResetText();
             ResetFont();
             ResetImages();
         }
 
-        string processFields(string inputFrame, List<TypedField> typedFields)
+        public static string ProcessFields(int frameIndex, Variation variation)
         {
-            string pattern = "{([\\da-zA-Z_\\-]+)}";
-            var matches = Regex.Matches(inputFrame, pattern);
-            string outputFrame = "";
+            string inputFrame = variation.Frames[frameIndex];
+            List<TypedField> typedFields = variation.TypedFields;
+            string outputFrame = string.Empty;
 
-            int lastIndex = 0;
-            foreach (Match match in matches)
+            List<FieldInstance> fieldInstances = new();
+            foreach (var field in typedFields)
+                foreach (var instance in field.Instances)
+                    if (instance.FrameIndex == frameIndex)
+                        fieldInstances.Add(instance);
+
+            int writePos = 0;
+            if (fieldInstances.Count > 0)
             {
-                if (match.Index > lastIndex)
+                for (int i = 0; i < fieldInstances.Count; i++)
                 {
-                    outputFrame += inputFrame.Substring(lastIndex, match.Index - lastIndex);
-                }
+                    FieldInstance currentInstance = fieldInstances[i];
+                    TypedField ownerField = currentInstance.OwnerField;
+                    string currentValue = ownerField.GetValueAsStringAt(currentInstance, true);
 
-                string group1 = match.Groups[1].Value;
-                var field = typedFields.FirstOrDefault(f => f.Identifier == group1);
-                if (field != null)
-                {
-                    outputFrame += field.GetValueAsString();
-                }
-                else
-                {
-                    outputFrame += match.Value;
-                }
+                    if (writePos > inputFrame.Length) break;
+                    outputFrame += inputFrame.Substring(writePos, currentInstance.StartPos - writePos);
 
-                lastIndex = match.Index + match.Length;
+                    if (!ownerField.IsReferential)
+                    {
+                        if (currentInstance.SetTo == null)
+                            ownerField.SetValueUntyped(currentValue);
+                        else ownerField.SetValueUntyped(currentInstance.SetTo);
+                    }
+
+                    outputFrame += currentValue;
+                    writePos = currentInstance.StartPos + currentInstance.TotalLength;
+                }
+                if (writePos <= inputFrame.Length) outputFrame += inputFrame.Substring(writePos);
             }
-
-            if (lastIndex < inputFrame.Length)
-            {
-                outputFrame += inputFrame.Substring(lastIndex);
-            }
+            else return inputFrame;
 
             return outputFrame;
-        }
-
-        string interpolateFrames(string frame1, string frame2, float progress = 0f)
-        {
-            string pattern = "{(\\d+):((-?\\d*((\\.\\d*)?))|(#[A-Fa-f0-9]+))}";
-            var frame1Separated = separateNumbers(frame1, pattern);
-            var frame2Separated = separateNumbers(frame2, pattern);
-
-            if (progress <= 0f) return frame1;
-            if (progress >= 1f) return frame2;
-
-            string combined = "";
-
-            for (int i = 0; i < frame1Separated.Count; i++)
-            {
-                if (!frame1Separated[i].Value)
-                {
-                    combined += frame1Separated[i].Key;
-                }
-                else // If this is an interpolated value; i.e. "{1:318.4}"
-                {
-                    int sigFigs1 = 0;
-
-                    string valueType1 = "number";
-                    Color lerpColor1 = Color.black;
-                    double lerpDouble1 = 0f;
-
-                    var match = Regex.Match(frame1Separated[i].Key, pattern);
-                    int linkIndex = int.Parse(match.Groups[1].Value);
-                    string lerpValue1 = match.Groups[2].Value;
-                    if (ColorUtility.TryParseHtmlString(lerpValue1, out lerpColor1))
-                    {
-                        valueType1 = "color";
-                    }
-                    if (Double.TryParse(lerpValue1, out lerpDouble1))
-                    {
-                        List<String> split = lerpValue1.Split(".").ToList();
-                        if (split.Count > 1) sigFigs1 = Math.Clamp(split[1].Length, 1, 5);
-                    }
-
-                    string valueType2 = "number";
-                    Color lerpColor2 = Color.black;
-                    double lerpDouble2 = 0f;
-
-                    var match2 = Regex.Match(frame2Separated[i].Key, pattern);
-                    int linkIndex2 = int.Parse(match2.Groups[1].Value);
-                    string lerpValue2 = match2.Groups[2].Value;
-
-                    if (ColorUtility.TryParseHtmlString(lerpValue2, out lerpColor2))
-                    {
-                        valueType2 = "color";
-                    }
-                    if (Double.TryParse(lerpValue2, out lerpDouble2))
-                    {
-                        List<String> split = lerpValue2.Split(".").ToList();
-                        int sigFigs2 = 0;
-                        if (split.Count > 1) sigFigs2 = Math.Clamp(split[1].Length, 1, 5);
-                        sigFigs1 = Math.Max(sigFigs1, sigFigs2);
-                    }
-
-                    if (valueType1 == "color" && valueType2 == "color")
-                    {
-                        //MelonLogger.Msg($"from: {HelperFunctions.ToHtmlStringRGB(lerpColor1)} | to: {HelperFunctions.ToHtmlStringRGB(lerpColor1)}");
-                        combined += HelperFunctions.ToHtmlStringRGB(Color.Lerp(lerpColor1, lerpColor2, progress));
-                        continue;
-                    }
-
-                    if (valueType1 == "number" && valueType2 == "number")
-                    {
-                        //MelonLogger.Msg($"from: {lerpDouble1} | to: {lerpDouble2}");
-                        float lerped = Mathf.Lerp((float)lerpDouble1, (float)lerpDouble2, progress);
-                        combined += lerped.ToString("F" + sigFigs1);
-                        continue;
-                    }
-
-                    combined += frame1Separated[i];
-                }
-            }
-
-            //MelonLogger.Msg(combined);
-            return combined;
-        }
-
-        List<KeyValuePair<string, bool>> separateNumbers(string input, string pattern)
-        {
-            var parts = new List<KeyValuePair<string, bool>>();
-            var matches = Regex.Matches(input, pattern);
-
-            int lastIndex = 0;
-
-            foreach (Match match in matches)
-            {
-                if (match.Index > lastIndex)
-                {
-                    parts.Add(new (
-                        input.Substring(lastIndex, match.Index - lastIndex),
-                        false)); // Non-matching part
-                }
-
-                parts.Add(new (
-                    match.Value,
-                    true)); // Matching part
-                lastIndex = match.Index + match.Length;
-            }
-
-            if (lastIndex < input.Length)
-            {
-                parts.Add(new (
-                    input.Substring(lastIndex),
-                    false)); // Remaining non-matching part
-            }
-
-            return parts;
         }
 
         TMP_FontAsset getFontFromName(string font)
