@@ -1,6 +1,4 @@
-﻿using Il2Cpp;
-using Il2CppPhoton.Pun;
-using Il2CppPOpusCodec.Enums;
+﻿using Il2CppPhoton.Pun;
 using Il2CppRUMBLE.Players;
 using MelonLoader;
 using Newtonsoft.Json;
@@ -11,14 +9,6 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.Networking;
 using static NameBending.Core;
-using ThreeDISevenZeroR.UnityGifDecoder;
-using ThreeDISevenZeroR.UnityGifDecoder.Model;
-using UnityEngine.Playables;
-using Il2CppSystem.Linq.Expressions;
-using Microsoft.Extensions.Primitives;
-using Il2CppInterop.Generator.Passes;
-using System.Collections.ObjectModel;
-using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 
 namespace NameBending
@@ -67,8 +57,14 @@ namespace NameBending
         [JsonProperty("interpolation")]
         public bool Interpolation = false;
 
+        [JsonProperty("loopInterpolation")]
+        public bool LoopInterpolation = true;
+
         [JsonProperty("enableFields")]
         public bool EnableFields = true;
+
+        [JsonProperty("autoScaling")]
+        public bool AutoScaling = true;
 
         [JsonProperty("fields")]
         private Dictionary<string, string> fields;
@@ -82,6 +78,8 @@ namespace NameBending
                 return _typedFields;
             }
         }
+        [JsonIgnore]
+        public bool FieldInstancesFound = false;
 
         [JsonIgnore]
         List<TypedField> _typedFields;
@@ -119,6 +117,7 @@ namespace NameBending
             foreach (var field in fields)
             {
                 TypedField toAdd;
+                string[] identParams = field.Key.Split('|');
 
                 // Boolean
                 if (field.Value == "true") toAdd = new TypedField(true);
@@ -133,7 +132,6 @@ namespace NameBending
                 // Strings
                 else toAdd = new TypedField(field.Value);
 
-                string[] identParams = field.Key.Split('|');
                 toAdd.Identifier = identParams[0];
                 if (identParams.Length > 1)
                 {
@@ -141,6 +139,8 @@ namespace NameBending
                     if (param == "#")
                     {
                         toAdd.CurrentFormatType = TypedField.FormatType.Hex;
+                        if (identParams.Length >= 3 && int.TryParse(identParams[2], out int digits))
+                            toAdd.HexDigits = digits;
                     }
                     else if (Regex.IsMatch(param, "\\.0*"))
                     {
@@ -193,6 +193,7 @@ namespace NameBending
                         if (group1 == typedField.Identifier)
                         {
                             FieldInstance newInstance = new FieldInstance(typedField, frameIndex, match.Groups[1].Index - 1, match.Length);
+                            newInstance.DefinitionIndex = ++typedField.InstanceIndexTracker;
                             if (match.Groups.Count > 2)
                             {
                                 string group2 = match.Groups[2].Value;
@@ -204,6 +205,7 @@ namespace NameBending
                     }
                 }
             }
+            FieldInstancesFound = true;
         }
 
         public TypedField FindField(string identifier)
@@ -355,8 +357,18 @@ namespace NameBending
                     throw new System.Exception("No next modifier found"); // Give up
                 }
             }
-
             return index;
+        }
+
+        public void DownloadAllImages()
+        {
+            if (Images != null)
+                foreach (ImageInfo imageInfo in Images)
+                {
+                    imageInfo.DoLooping = LoopFrames;
+                    if (imageInfo.DownloadCoroutine != null) MelonCoroutines.Stop(imageInfo.DownloadCoroutine);
+                    imageInfo.DownloadCoroutine = MelonCoroutines.Start(imageInfo.DownloadImage());
+                }
         }
 
         public int GetJsonPropertiesHashCode()
@@ -373,6 +385,9 @@ namespace NameBending
                 hash = hash * 23 + FrameDuration.GetHashCode();
                 hash = hash * 23 + LoopFrames.GetHashCode();
                 hash = hash * 23 + Interpolation.GetHashCode();
+                hash = hash * 23 + LoopInterpolation.GetHashCode();
+                hash = hash * 23 + EnableFields.GetHashCode();
+                hash = hash * 23 + AutoScaling.GetHashCode();
                 hash = hash * 23 + (Frames != null ? Frames.GetHashCode() : 0);
                 hash = hash * 23 + (Fonts != null ? Fonts.GetHashCode() : 0);
                 hash = hash * 23 + (Images != null ? Images.GetHashCode() : 0);
@@ -422,6 +437,9 @@ namespace NameBending
         [JsonProperty("link")]
         public string Link;
 
+        [JsonProperty("token")]
+        public string Token;
+
         [JsonProperty("x")]
         public float XOffset = 0f;
 
@@ -454,7 +472,7 @@ namespace NameBending
             set
             {
                 Frames.Clear();
-                Frames.Add(new FrameData { Texture = value, HolderList = Frames });
+                Frames.Add(new FrameData(value, Frames, !TextureDownloaded || Censored));
             }
         }
 
@@ -510,61 +528,71 @@ namespace NameBending
         public IEnumerator DownloadImage()
         {
             UndownloadImage();
+            if (Config.DisableMod.Value) yield break;
+            if (Config.Images.Value == false) yield break;
 
-            if (!FindLinkTrust(Link) && !ForceUncensor)
+            if (!Core.Instance.CachedImages.ContainsKey(Link))
             {
-                Frames.Add(new FrameData
+                var verifyTask = LinkVerifier.VerifyAndFetch(Link, Token, Core._http);
+                while (!verifyTask.IsCompleted)
+                    yield return null;
+
+                bool approved = verifyTask.IsCompletedSuccessfully && verifyTask.Result.approved;
+                byte[]? imageBytes = verifyTask.IsCompletedSuccessfully ? verifyTask.Result.imageBytes : null;
+
+                if (!approved && !ForceUncensor)
                 {
-                    Texture = Core.Instance.CachedCensoredTexture,
-                    HolderList = Frames
-                });
-
-                TextureDownloaded = true;
-                Censored = true;
-                yield break;
-            }
-            else
-            {
-                Censored = false;
-            }
-
-            UnityWebRequest uwr = UnityWebRequest.Get(Link);
-            yield return uwr.SendWebRequest();
-
-            if (uwr.result != UnityWebRequest.Result.Success)
-            {
-                MelonLogger.Error($"Failed to download image: {Link} - {uwr.error}");
-                uwr.Dispose();
-                yield break;
-            }
-
-            byte[] imageBytes = uwr.downloadHandler.data;
-            uwr.Dispose();
-
-            isGIF = Link.ToLower().EndsWith(".gif");
-            if (isGIF) // Add all textures to Frames list
-            {
-                Frames.AddRange(HelperFunctions.ConvertGifToList(imageBytes));
-                foreach (FrameData frame in Frames) frame.HolderList = Frames;
-            }
-            else // Add image texture to first item of Frames list
-            {
-                var tex = new Texture2D(2, 2, TextureFormat.RGBA32, true);
-                tex.name = Link;
-                if (!tex.LoadImage(imageBytes))
-                {
-                    MelonLogger.Error($"Failed to create texture from downloaded data: {Link}");
-                    TextureDownloaded = false;
+                    Frames.Add(new FrameData(Core.Instance.CachedCensoredTexture, Frames, true));
+                    TextureDownloaded = true;
+                    Censored = true;
                     yield break;
                 }
-                Frames.Add(new FrameData
+                else
                 {
-                    Texture = tex,
-                    HolderList = Frames
-                });
-            }
+                    Censored = false;
+                }
 
-            TextureDownloaded = true;
+                isGIF = Link.ToLower().EndsWith(".gif");
+                if (isGIF)
+                {
+                    Frames.AddRange(HelperFunctions.ConvertGifToList(imageBytes!));
+                    foreach (FrameData frame in Frames) frame.HolderList = Frames;
+                }
+                else
+                {
+                    var tex = new Texture2D(2, 2, TextureFormat.RGBA32, true);
+                    GameObject.DontDestroyOnLoad(tex);
+                    tex.hideFlags = HideFlags.HideAndDontSave | HideFlags.DontUnloadUnusedAsset;
+                    tex.name = Link;
+                    tex.mipMapBias = Config.MipmapBias.Value;
+                    if (!tex.LoadImage(imageBytes!))
+                    {
+                        MelonLogger.Error($"Failed to create texture from downloaded data: {Link}");
+                        TextureDownloaded = false;
+                        yield break;
+                    }
+                    Frames.Add(new FrameData(tex, Frames));
+                }
+                TextureDownloaded = true;
+                if (!Core.Instance.CachedImages.ContainsKey(Link) && Frames.Count > 0)
+                {
+                    List<FrameData> newFrames = new();
+                    foreach (FrameData frame in Frames) newFrames.Add(new FrameData(frame));
+                    Core.Instance.CachedImages[Link] = newFrames;
+                }
+            }
+            else // Image is cached
+            {
+                TextureDownloaded = true;
+                List<FrameData> cachedFrames = Core.Instance.CachedImages[Link];
+                Frames.Clear();
+                foreach (FrameData frame in cachedFrames)
+                {
+                    FrameData newFrameData = new FrameData(frame);
+                    newFrameData.Texture.LoadImage(frame.CachedBytes); // Grab image from bytes since Texture2D is eaten on scene load
+                    Frames.Add(newFrameData);
+                }
+            }
         }
 
         public void UndownloadImage()
@@ -572,35 +600,6 @@ namespace NameBending
             Frames.Clear();
             TextureDownloaded = false;
             isGIF = false;
-        }
-
-        public static bool FindLinkTrust(string link)
-        {
-            List<string> trustedLinks = new List<string>
-            {
-                "imgur.com",
-                "i.imgur.com"
-            };
-
-            if (string.IsNullOrWhiteSpace(link))
-                return false;
-
-            try
-            {
-                var uri = new Uri(link);
-                foreach (string trustedLink in trustedLinks)
-                {
-                    if (uri.Host.Equals(trustedLink, StringComparison.OrdinalIgnoreCase))
-                        return true;
-                }
-            }
-            catch
-            {
-                // Invalid URL
-                return false;
-            }
-
-            return false;
         }
 
         public ImageInfo GetLoadingGif()
@@ -624,6 +623,8 @@ namespace NameBending
     public class FrameData
     {
         public Texture2D Texture;
+        public byte[] CachedBytes;
+        public bool Censcored = false;
         public int Index = 0;
         public float Delay = 0.001f;
         public List<FrameData> HolderList;
@@ -635,6 +636,31 @@ namespace NameBending
             float timestamp = 0;
             for (int i = 0; i < Index; i++) timestamp += HolderList[i].Delay;
             return timestamp;
+        }
+
+        public FrameData(Texture2D texture, List<FrameData> holderList, bool dontCache = false)
+        {
+            Texture = texture;
+            HolderList = holderList;
+
+            if (!dontCache)
+                CachedBytes = texture.EncodeToPNG();
+        }
+        public FrameData(Texture2D texture, float delay, bool dontCache = false)
+        {
+            Texture = texture;
+            Delay = delay;
+
+            if (!dontCache)
+                CachedBytes = texture.EncodeToPNG();
+        }
+        public FrameData(FrameData frameData)
+        {
+            Texture = frameData.Texture;
+            CachedBytes = frameData.CachedBytes;
+            Index = frameData.Index;
+            Delay = frameData.Delay;
+            HolderList = frameData.HolderList;
         }
     }
 }

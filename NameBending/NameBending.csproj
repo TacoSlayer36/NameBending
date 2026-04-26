@@ -16,7 +16,7 @@
 	<ItemGroup>
 		<Reference Include="C:\Program Files (x86)\Steam\steamapps\common\RUMBLE\MelonLoader\**\*.dll" Private="false" />
 		<Reference Include="ModUI">
-			<HintPath>C:\Program Files (x86)\Steam\steamapps\common\RUMBLE\Mods\ModUI.dll</HintPath>
+			<HintPath>C:\Program Files (x86)\Steam\steamapps\common\RUMBLE\Mods\UIFramework.dll</HintPath>
 		</Reference>
 		<Reference Include="RumbleModdingAPI">
 			<HintPath>C:\Program Files (x86)\Steam\steamapps\common\RUMBLE\Mods\RumbleModdingAPI.dll</HintPath>

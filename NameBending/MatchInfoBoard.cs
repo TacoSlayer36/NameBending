@@ -1,5 +1,9 @@
-﻿using Il2CppRUMBLE.Managers;
+﻿using HarmonyLib;
+using Il2CppRUMBLE.Environment.MatchFlow;
+using Il2CppRUMBLE.Managers;
+using Il2CppRUMBLE.Players;
 using Il2CppRUMBLE.Players.Subsystems;
+using Il2CppRUMBLE.Slabs;
 using Il2CppTMPro;
 using MelonLoader;
 using RumbleModdingAPI;
@@ -11,134 +15,89 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace NameBending
+namespace NameBending;
+
+public static class MatchInfoBoard
 {
-    partial class Core
+    private static GameObject matchInfoBoard;
+    private static GameObject matchInfoPlayer1Name;
+    private static GameObject matchInfoPlayer2Name;
+    private static GameObject matchInfoPlayer1BP;
+    private static GameObject matchInfoPlayer2BP;
+
+    private static GameObject player1TagClone = null;
+    private static GameObject player2TagClone = null;
+
+    public static bool HasMatchInfo = false;
+    public static GameObject PlateClone1;
+    public static GameObject PlateClone2;
+
+    public static IEnumerator FindMatchInfoBoard()
     {
-        bool hasMatchInfo = false;
-        bool matchInfoSetUp = false;
+        yield return new WaitForSeconds(5f);
 
-        private GameObject player1TagClone = null;
-        private GameObject player2TagClone = null;
-
-        private IEnumerator setUpMatchInfo(string scene)
+        try
         {
-            if (!matchInfoSetUp)
-            {
-                yield return new WaitForSeconds(3f);
+            GameObject[] allObjects = UnityEngine.Object.FindObjectsOfType<GameObject>(true);
+            matchInfoBoard = allObjects.FirstOrDefault(go => go.name == "MatchInfoMod");
+            if (matchInfoBoard == null)
+                yield break;
 
-                // Duplicate name tags
-                Il2CppRUMBLE.Players.Player player1 = null;
-                Il2CppRUMBLE.Players.Player player2 = null;
+            matchInfoPlayer1Name = matchInfoBoard.transform.Find("Player1Name")?.gameObject;
+            matchInfoPlayer2Name = matchInfoBoard.transform.Find("Player2Name")?.gameObject;
+            matchInfoPlayer1BP = matchInfoBoard.transform.Find("Player1BP")?.gameObject;
+            matchInfoPlayer2BP = matchInfoBoard.transform.Find("Player2BP")?.gameObject;
 
-                try
-                {
-                    player1 = PlayerManager.Instance.AllPlayers[1];
-                }
-                catch
-                { }
+            HasMatchInfo = true;
+        }
+        catch
+        {
+            HasMatchInfo = false;
+        }
+    }
 
-                try
-                {
-                    player2 = PlayerManager.Instance.AllPlayers[0];
-                }
-                catch
-                { }
+    public static IEnumerator SetUpMatchInfoDelayed(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        SetUpMatchInfo();
+    }
+    public static void SetUpMatchInfo()
+    {
+        if (PlayerManager.Instance.AllPlayers.Count < 2) return;
+        if (!HasMatchInfo) return;
 
-                if (player1 == null || player2 == null || scene != sceneName)
-                {
-                    yield break;
-                }
+        PlayerController player1 = PlayerManager.Instance.AllPlayers[0]?.Controller;
+        PlayerController player2 = PlayerManager.Instance.AllPlayers[1]?.Controller;
 
-                GameObject player1Tag = player1.Controller.transform.Find("NameTag").gameObject;
-                if (player1Tag != null)
-                {
-                    player1TagClone = GameObject.Instantiate(player1Tag);
-                    PlayerNameTag tagComponent = player1Tag.GetComponent<Il2CppRUMBLE.Players.Subsystems.PlayerNameTag>();
-                    tagComponent.parentController = player1.Controller;
+        PlateClone1 = Core.Instance.CloneNameplate(player1.transform.Find("NameTag").gameObject);
+        PlateClone2 = Core.Instance.CloneNameplate(player2.transform.Find("NameTag").gameObject);
 
-                    player1TagClone.SetActive(false);
-                    player1TagClone.transform.GetChild(0).GetComponent<TextMeshPro>().text = player1Tag.transform.GetChild(0).GetComponent<TextMeshPro>().text;
-                    player1TagClone.transform.GetChild(3).GetComponent<TextMeshPro>().text = player1Tag.transform.GetChild(3).GetComponent<TextMeshPro>().text;
-                }
-                GameObject player2Tag = player2.Controller.transform.Find("NameTag").gameObject;
-                if (player2Tag != null)
-                {
-                    player2TagClone = GameObject.Instantiate(player2Tag);
-                    PlayerNameTag tagComponent = player2TagClone.GetComponent<Il2CppRUMBLE.Players.Subsystems.PlayerNameTag>();
-                    tagComponent.parentController = player2.Controller;
+        PlateClone1.SetActive(true);
+        PlateClone2.SetActive(true);
 
-                    tagComponent.UpdatePlayerBPText();
-                    tagComponent.UpdatePlayerNameTagColor();
-                    tagComponent.UpdatePlayerRankIcon();
-                    tagComponent.UpdatePlayerTitleText();
-                    tagComponent.UpdatePlayerNameText();
+        PlateClone1.transform.SetParent(matchInfoBoard.transform);
+        PlateClone1.transform.rotation = matchInfoPlayer2Name.transform.rotation * Quaternion.Euler(0f, 180f, 0f);
+        PlateClone1.transform.localPosition = new Vector3(1.24f, 0.78f, 0f);
+        PlateClone1.transform.localScale = Vector3.one * 2f;
 
-                    player2TagClone.SetActive(false);
-                    player2TagClone.transform.GetChild(3).GetComponent<TextMeshPro>().text = player2Tag.transform.GetChild(3).GetComponent<TextMeshPro>().text;
-                    player2TagClone.transform.GetChild(0).GetComponent<TextMeshPro>().text = player2Tag.transform.GetChild(0).GetComponent<TextMeshPro>().text;
-                }
+        PlateClone2.transform.SetParent(matchInfoBoard.transform);
+        PlateClone2.transform.rotation = matchInfoPlayer2Name.transform.rotation * Quaternion.Euler(0f, 180f, 0f);
+        PlateClone2.transform.localPosition = new Vector3(-1.24f, 0.78f, 0f);
+        PlateClone2.transform.localScale = Vector3.one * 2f;
 
-                yield return new WaitForSeconds(3f);
+        matchInfoPlayer1Name.SetActive(false);
+        matchInfoPlayer2Name.SetActive(false);
+        matchInfoPlayer1BP.SetActive(false);
+        matchInfoPlayer2BP.SetActive(false);
+    }
 
-                if (sceneName == "Map0")
-                {
-                    if (player1TagClone != null)
-                    {
-                        player1TagClone.transform.position = new Vector3(-2.51f, 0.27f, 20f);
-                    }
-                    if (player2TagClone != null)
-                    {
-                        player2TagClone.transform.position = new Vector3(0.51f, 0.27f, 20f);
-                    }
-                }
-                if (sceneName == "Map1")
-                {
-                    if (player1TagClone != null)
-                    {
-                        player1TagClone.transform.position = new Vector3(-1.51f, 6.02f, 10.5f);
-                        MelonLogger.Msg(player1TagClone.transform.position);
-                    }
-                    if (player2TagClone != null)
-                    {
-                        player2TagClone.transform.position = new Vector3(1.51f, 6.02f, 10.5f);
-                        MelonLogger.Msg(player2TagClone.transform.position);
-                    }
-                }
-
-                if (player1TagClone != null)
-                {
-                    player1TagClone.transform.localScale = new Vector3(2.5f, 2.5f, 2.5f);
-                    player1TagClone.transform.rotation = Quaternion.Euler(0f, 180f, 0f);
-                    player1TagClone.SetActive(true);
-                    PlayerNameTag tagComponent = player1TagClone.GetComponent<PlayerNameTag>();
-                    tagComponent.parentController = player1.Controller;
-                    tagComponent.FadePlayerNameTag(true);
-                }
-
-                if (player2TagClone != null)
-                {
-                    player2TagClone.transform.localScale = new Vector3(2.5f, 2.5f, 2.5f);
-                    player2TagClone.transform.rotation = Quaternion.Euler(0f, 180f, 0f);
-                    player2TagClone.SetActive(true);
-                    PlayerNameTag tagComponent = player2TagClone.GetComponent<PlayerNameTag>();
-                    tagComponent.parentController = player2.Controller;
-                    tagComponent.FadePlayerNameTag(true);
-                }
-
-                yield return new WaitForSeconds(1f);
-
-                GameObject sign = GameObject.Find("MatchInfoMod");
-
-                // Move sign forward slightly (so the tags don't clip into the wall)
-                sign.transform.position = new Vector3(sign.transform.position.x, sign.transform.position.y, sign.transform.position.z - 0.501f);
-                sign.transform.Find("Player1Name").gameObject.active = false;
-                sign.transform.Find("Player2Name").gameObject.active = false;
-                sign.transform.Find("Player1BP").gameObject.active = false;
-                sign.transform.Find("Player2BP").gameObject.active = false;
-            }
-
-            matchInfoSetUp = true;
+    [HarmonyPatch(typeof(SlabOwnership), nameof(SlabOwnership.SetOwnership), new Type[] { typeof(Pedestal) })]
+    public static class slabpatch
+    {
+        private static void Postfix()
+        {
+            PlateClone1?.GetComponentInChildren<PlayerNameTag>()?.UpdatePlayerBPText();
+            PlateClone2?.GetComponentInChildren<PlayerNameTag>()?.UpdatePlayerBPText();
         }
     }
 }

@@ -1,14 +1,10 @@
-﻿using AsmResolver.DotNet;
-using AsmResolver.DotNet.Signatures;
-using Il2CppJetBrains.Annotations;
-using MelonLoader;
+﻿using Il2CppNewtonsoft.Json.Converters;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace NameBending
@@ -34,11 +30,21 @@ namespace NameBending
             Hex = 3
         }
 
-        public static ReadOnlyCollection<string> FactoryFields = new List<string>() { "RANDOM", "FRAME_RANDOM", "INSTANCE_RANDOM", "FRAME_PROGRESS", "LOOP_PROGRESS", "FRAME", "TIMER" }.AsReadOnly();
-        public bool IsFactory => StringValue == null ? false : FactoryFields.Contains(StringValue.Split('|')?[0]);
+        public static ReadOnlyCollection<string> FactoryFields = new List<string>() { "RANDOM", "INSTANCE_RANDOM", "FRAME_PROGRESS", "LOOP_PROGRESS", "FRAME", "TIMER" }.AsReadOnly();
+        public bool IsFactory
+        {
+            get
+            {
+                string param = StringValue?.Split('|')?[0] ?? string.Empty;
+                if (param != null)
+                    return FactoryFields.Contains(param) || param.Contains("RANDOM");
+                return false;
+            }
+        }
 
         public string Identifier;
         public int DefinitionIndex = 0;
+        public int InstanceIndexTracker = 0;
         public FieldType CurrentFieldType;
         public FormatType CurrentFormatType;
 
@@ -49,30 +55,30 @@ namespace NameBending
 
         public int SigFigs = 2;
         public int Round = 1;
+        public int HexDigits = 0;
 
-        int prevFrameIndex = 0;
         float lastOutput;
 
         public List<FieldInstance> Instances = new();
 
         public bool IsReferential = false;
         public List<Tuple<string, int>> InternalFieldRefs = new();
-        public static int RecursionTicker = 0;
+        public static int DepthTicker = 0;
 
-        public FieldInstance FindNeighborInstance(FieldInstance fieldInstance, bool onlySetters = true, bool findPrevious = false)
+        public FieldInstance FindNeighborInstance(FieldInstance fieldInstance, bool onlySetters = true, bool findPrevious = false, bool loop = false)
         {
-            return FindNeighborInstance(fieldInstance.FrameIndex, fieldInstance.StartPos, onlySetters, findPrevious);
+            return FindNeighborInstance(fieldInstance.FrameIndex, fieldInstance.StartPos, onlySetters, findPrevious, loop);
         }
-        public FieldInstance FindNeighborInstance(int frameIndex, int startPos, bool onlySetters = true, bool findPrevious = false)
+        public FieldInstance FindNeighborInstance(int frameIndex, int startPos, bool onlySetters = true, bool findPrevious = false, bool loop = false)
         {
             if (Instances == null || Instances.Count == 0)
                 return null;
-
             var ordered = Instances.OrderBy(i => i.FrameIndex).ThenBy(i => i.StartPos).ToList();
-
             if (onlySetters)
-                ordered = ordered.Where(i => i.SetTo != null).ToList();
-
+            {
+                ordered = ordered.Where(i => i.IsSetter).ToList();
+                if (ordered.Count == 0) return null;
+            }
             if (!findPrevious)
             {
                 foreach (var inst in ordered)
@@ -80,6 +86,7 @@ namespace NameBending
                     if (inst.FrameIndex > frameIndex)
                         return inst;
                 }
+                return loop ? ordered.First() : null;
             }
             else
             {
@@ -89,9 +96,8 @@ namespace NameBending
                     if (inst.FrameIndex <= frameIndex)
                         return inst;
                 }
+                return loop ? ordered.Last() : null;
             }
-
-            return null;
         }
         public FieldInstance FindInstanceAt(int frameIndex, int startPos, bool onlySetters = true)
         {
@@ -153,6 +159,8 @@ namespace NameBending
 
             // Number
             else if (float.TryParse(value, out var numberValue)) SetValue(numberValue);
+            else if (CurrentFormatType is FormatType.Hex && int.TryParse(value, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out int hexValue))
+                SetValue(hexValue);
 
             // Color
             else if (ColorUtility.TryParseHtmlString(value, out var colorValue)) SetValue(colorValue);
@@ -161,18 +169,30 @@ namespace NameBending
             else SetValue(value);
         }
 
-        public static string LerpValueUntyped(string a, string b, float t)
+        public static string LerpValueUntyped(string a, string b, float t, TypedField ownerField)
         {
             // Number
-            if (float.TryParse(a, out var numberValueA) &&
-                float.TryParse(b, out var numberValueB))
+            if (ownerField.HexDigits <= 0)
             {
-                float lerped = Mathf.Lerp(numberValueA, numberValueB, t);
-                return lerped.ToString("n" + Core.FloatingPointPrecision);
+                if (float.TryParse(a, out var numberValueA) &&
+                    float.TryParse(b, out var numberValueB))
+                {
+                    float lerped = Mathf.Lerp(numberValueA, numberValueB, t);
+                    return ownerField.ProcessFormatting(lerped);
+                }
+            }
+            else
+            {
+                if (int.TryParse(a, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out int numberValueA) &&
+                    int.TryParse(b, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out int numberValueB))
+                {
+                    float lerped = Mathf.Lerp(numberValueA, numberValueB, t);
+                    return ownerField.ProcessFormatting(lerped);
+                }
             }
 
             // Color
-            else if (ColorUtility.TryParseHtmlString(a, out var colorValueA) &&
+            if (ColorUtility.TryParseHtmlString(a, out var colorValueA) &&
                      ColorUtility.TryParseHtmlString(b, out var colorValueB))
             {
                 Color lerped = Color.Lerp(colorValueA, colorValueB, t);
@@ -183,8 +203,10 @@ namespace NameBending
             return a;
         }
 
-        public string GetValueAsString(bool entry)
+        public string GetValueAsString(bool entry, int instanceIndex, int frameIndex = -1)
         {
+            if (frameIndex == -1) frameIndex = OwnerComponent.FrameIndex;
+
             if (!IsFactory)
             {
                 switch (CurrentFieldType)
@@ -192,31 +214,25 @@ namespace NameBending
                     case FieldType.Boolean: return BooleanValue.ToString();
                     case FieldType.Number: return ProcessFormatting(NumberValue);
                     case FieldType.Color: return HelperFunctions.ToHtmlStringRGB(ColorValue);
-                    default: return ProcessInternalRefs(StringValue, entry);
+                    default: return ProcessInternalRefs(StringValue, entry, instanceIndex);
                 }
             }
             else
             {
-                var fieldParams = ProcessInternalRefs(StringValue, entry).Split('|');
+                var fieldParams = ProcessInternalRefs(StringValue, entry, instanceIndex).Split('|');
                 string param1 = fieldParams[0];
                 float output = lastOutput;
 
                 bool doRemap = false;
                 bool doDilation = false;
 
-                if (param1 == "RANDOM" || param1 == "INSTANCE_RANDOM" || param1 == "FRAME_RANDOM")
+                if (param1.Contains("RANDOM"))
                 {
-                    prevFrameIndex = OwnerComponent.FrameIndex;
-                    System.Random randy;
-                    if (param1 == "INSTANCE_RANDOM")
-                    {
-                        randy = new System.Random();
-                    }
-                    else
-                    {
-                        int hash = HashCode.Combine(OwnerComponent.Timer, DefinitionIndex);
-                        randy = new System.Random(hash);
-                    }
+                    int hash = HashCode.Combine(OwnerComponent.Timer);
+                    if (param1.Contains("FRAME")) hash = HashCode.Combine(OwnerComponent.LoopCount, frameIndex);
+                    if (param1.Contains("INSTANCE")) hash = HashCode.Combine(hash, instanceIndex);
+
+                    System.Random randy = new(hash);
                     output = (float)randy.NextDouble();
                     doRemap = true;
                 }
@@ -295,7 +311,16 @@ namespace NameBending
         {
             if (CurrentFormatType is FormatType.Hex)
             {
-                return ((int)input).ToString("X");
+                string output = ((int)input).ToString("X");
+
+                if (HexDigits > 0)
+                {
+                    output = output.Length > HexDigits
+                    ? new string('F', HexDigits)
+                    : output.PadLeft(HexDigits, '0');
+                }
+
+                return output;
             }
             else if (CurrentFormatType is FormatType.SigFigs)
             {
@@ -339,13 +364,12 @@ namespace NameBending
             return InternalFieldRefs.Count > 0;
         }
 
-        public string ProcessInternalRefs(string input, bool entry)
+        public string ProcessInternalRefs(string input, bool entry, int instanceIndex)
         {
             if (entry)
-                RecursionTicker = -1;
+                DepthTicker = 0;
 
-            RecursionTicker++;
-            if (RecursionTicker > 10) return input;
+            DepthTicker++;
 
             string output = String.Empty;
             int writePos = 0;
@@ -356,13 +380,12 @@ namespace NameBending
                 {
                     Tuple<string, int> currentFieldRef = InternalFieldRefs[i];
 
-                    //if (currentFieldRef.Item1 == Identifier)
-                    //{
-                    //    MelonLogger.Msg("AAAAAAAAAA");
-                    //    continue;
-                    //}
-                    TypedField referencedField = Variation.FindField(currentFieldRef.Item1);
-                    string currentValue = referencedField.GetValueAsStringAt(OwnerComponent.FrameIndex, currentFieldRef.Item2, false);
+                    string currentValue = String.Empty;
+                    if (DepthTicker < Config.FieldDepthLimit.Value)
+                    {
+                        TypedField referencedField = Variation.FindField(currentFieldRef.Item1);
+                        currentValue = referencedField.GetValueAsStringAt(OwnerComponent.FrameIndex, currentFieldRef.Item2, false, instanceIndex);
+                    }
                     
                     if (writePos > input.Length) break;
                     output += input.Substring(writePos, currentFieldRef.Item2 - writePos);
@@ -379,29 +402,41 @@ namespace NameBending
 
         public string GetValueAsStringAt(FieldInstance fieldInstance, bool entry)
         {
-            return GetValueAsStringAt(fieldInstance.FrameIndex, fieldInstance.StartPos, entry);
+            return GetValueAsStringAt(fieldInstance.FrameIndex, fieldInstance.StartPos, entry, fieldInstance.DefinitionIndex);
         }
-        public string GetValueAsStringAt(int frameIndex, int startPos, bool entry)
+        public string GetValueAsStringAt(int frameIndex, int startPos, bool entry, int instanceIndex = -1)
         {
             FieldInstance currentInstance = FindInstanceAt(frameIndex, startPos, true);
             if (currentInstance != null && OwnerComponent.FrameProgress == 0)
                 return currentInstance.SetTo;
 
-            FieldInstance nextSetterInstance = FindNeighborInstance(frameIndex, startPos, true, false);
-            FieldInstance prevSetterInstance = FindNeighborInstance(frameIndex, startPos, true, true);
+            FieldInstance nextSetterInstance = FindNeighborInstance(frameIndex, startPos, true, false, Variation.LoopInterpolation);
+            FieldInstance prevSetterInstance = FindNeighborInstance(frameIndex, startPos, true, true, Variation.LoopInterpolation);
 
             if (Variation.Interpolation && nextSetterInstance != null && prevSetterInstance != null)
             {
                 string lerpTo = nextSetterInstance.SetTo;
                 string lerpFrom = prevSetterInstance.SetTo;
 
-                int totalLerpFrames = nextSetterInstance.FrameIndex - prevSetterInstance.FrameIndex;
+                bool nextLooped = nextSetterInstance.FrameIndex <= prevSetterInstance.FrameIndex;
+                bool currentLooped = Variation.OwnerComponent.FrameIndex < prevSetterInstance.FrameIndex;
+
+                int totalFrameCount = Variation.Frames.Count;
+
+                int totalLerpFrames = nextLooped
+                    ? (totalFrameCount - prevSetterInstance.FrameIndex) + nextSetterInstance.FrameIndex
+                    : nextSetterInstance.FrameIndex - prevSetterInstance.FrameIndex;
+
                 float totalLerpTime = totalLerpFrames * Variation.FrameDuration;
-                int lerpedFrames = Variation.OwnerComponent.FrameIndex - prevSetterInstance.FrameIndex;
+
+                int lerpedFrames = currentLooped
+                    ? (totalFrameCount - prevSetterInstance.FrameIndex) + Variation.OwnerComponent.FrameIndex
+                    : Variation.OwnerComponent.FrameIndex - prevSetterInstance.FrameIndex;
+
                 float lerpedTime = (lerpedFrames * Variation.FrameDuration) + (Variation.OwnerComponent.FrameProgress * Variation.FrameDuration);
                 float lerpT = lerpedTime / totalLerpTime;
 
-                return TypedField.LerpValueUntyped(lerpFrom, lerpTo, lerpT);
+                return TypedField.LerpValueUntyped(lerpFrom, lerpTo, lerpT, nextSetterInstance.OwnerField);
             }
 
             if ((!Variation.Interpolation || (Variation.Interpolation && nextSetterInstance == null)) && prevSetterInstance != null)
@@ -409,7 +444,8 @@ namespace NameBending
                 return prevSetterInstance.SetTo;
             }
 
-            return GetValueAsString(entry);
+            if (instanceIndex == -1) instanceIndex = currentInstance?.DefinitionIndex ?? 0;
+            return GetValueAsString(entry, instanceIndex);
         }
 
         public TypedField(bool booleanValue)
@@ -440,11 +476,27 @@ namespace NameBending
     public class FieldInstance
     {
         public TypedField OwnerField;
+        public int DefinitionIndex = 0;
         public int FrameIndex = 0;
         public int StartPos = 0;
         public int TotalLength = 0;
 
-        public string SetTo = null;
+        private string _setTo = null;
+        public string SetTo
+        {
+            get
+            {
+                if (_setTo == null && OwnerField.IsFactory)
+                    return OwnerField.GetValueAsString(true, DefinitionIndex, FrameIndex);
+
+                return _setTo;
+            }
+            set
+            {
+                _setTo = value;
+            }
+        }
+        public bool IsSetter => !OwnerField.IsFactory && !OwnerField.IsReferential && _setTo != null;
 
         public FieldInstance(TypedField ownerField, int frameIndex, int startPos, int totalLength)
         {
@@ -452,6 +504,7 @@ namespace NameBending
             FrameIndex = frameIndex;
             StartPos = startPos;
             TotalLength = totalLength;
+            DefinitionIndex = ownerField.DefinitionIndex++;
         }
     }
 }

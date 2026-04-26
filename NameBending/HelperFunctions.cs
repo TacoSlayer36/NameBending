@@ -1,5 +1,6 @@
 ﻿using NameBending;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using ThreeDISevenZeroR.UnityGifDecoder;
 using UnityEngine;
 
@@ -42,6 +43,7 @@ public static class HelperFunctions
                     gifStream.Header.width,
                     gifStream.Header.height,
                     TextureFormat.ARGB32, false);
+                tex.mipMapBias = Config.MipmapBias.Value;
 
                 tex.SetPixels32(image.colors);
                 tex.Apply();
@@ -50,19 +52,18 @@ public static class HelperFunctions
                 {
                     delay = 0.001f;
                 }
-
-                // We have to store the texture and the delay for the playback,
-                // because the delay can be irregular, and we save memory by preallocating everything.
-                return new FrameData
-                {
-                    Texture = tex,
-                    Delay = delay
-                };
+                return new FrameData(tex, delay);
 
             default:
                 gifStream.SkipToken(); // Other tokens
                 break;
         }
         return null;
+    }
+
+    public static string SanitizeString(string Input)
+    {
+        string pattern = @"<[^>]*>";
+        return Regex.Replace(Input, pattern, string.Empty);
     }
 }

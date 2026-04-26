@@ -5,22 +5,12 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
-using UnityEngine.UI;
-using UnityEngine.Networking;
 using static NameBending.Core;
 using Il2CppPhoton.Pun;
-using System.Text.RegularExpressions;
-using System.Linq;
 using System.Collections;
-using Tomlet.Exceptions;
-using UnityEngine.Rendering.Universal;
-using Il2CppSystem.Data;
-using Il2CppPhoton.Voice;
-using System.Threading;
-using Il2CppSteamworks;
-using Microsoft.VisualBasic.FileIO;
-using static Il2CppSystem.Globalization.TimeSpanFormat;
-using ClipperLib;
+using Il2CppRUMBLE.Managers;
+using Il2CppRUMBLE.Players;
+using Il2CppRUMBLE.Players.Subsystems;
 
 namespace NameBending
 {
@@ -30,38 +20,119 @@ namespace NameBending
     {
         public Variation Variation;
         public List<BentImage> BentImages = new List<BentImage>();
-        public Il2CppRUMBLE.Players.Player Owner;
-        private Il2CppPhoton.Realtime.Player photonOwner => Owner.Controller.gameObject.GetComponent<PhotonView>().Owner;
+        public Player Owner;
+        private Il2CppPhoton.Realtime.Player photonOwner => Owner?.Controller?.gameObject?.GetComponent<PhotonView>()?.Owner;
 
         public bool IsLocal = false;
+        public bool IsPlayer = true;
+        public bool IsUI = true;
+
+        private PlayerNameTag _parentTag;
+        public PlayerNameTag ParentTag
+        {
+            get
+            {
+                if (_parentTag != null) return _parentTag;
+                _parentTag = GetComponentInParent<PlayerNameTag>();
+                return _parentTag;
+            }
+        }
+
+        public bool IsRemote => !IsLocal && !IsUI;
         public DesignationType DesignationType = DesignationType.Name;
         private string typeString => DesignationType == DesignationType.Name ? "Name" : "Title";
 
         public string unbentText;
 
-        public float Timer = 0f;
+        private float _timer = 0f;
+        public float Timer
+        {
+            get
+            {
+                if (Config.Animations.Value)
+                    return _timer;
+                else
+                    return 0;
+            }
+            set
+            {
+                _timer = value;
+            }
+        }
         private float frameDurationInSeconds => Variation.FrameDuration / 1000f;
         public float AnimationProgress = 0;
-        public int FrameIndex => (int)Math.Truncate(AnimationProgress);
-        public float FrameProgress => AnimationProgress - FrameIndex;
-        public float LoopProgress => AnimationProgress / (Variation.FindTotalFrameCount() * frameDurationInSeconds);
+        public int FrameIndex
+        {
+            get
+            {
+                if (Config.Animations.Value)
+                    return (int)Math.Truncate(AnimationProgress);
+                else
+                    return 0;
+            }
+        }
+        public float FrameProgress
+        {
+            get
+            {
+                if (Config.Animations.Value)
+                    return AnimationProgress - FrameIndex;
+                else
+                    return 0;
+            }
+        }
+        public float LoopProgress
+        {
+            get
+            {
+                if (Config.Animations.Value)
+                    return AnimationProgress / (Variation.FindTotalFrameCount() * frameDurationInSeconds);
+                else
+                    return 0;
+            }
+        }
+        public int LoopCount
+        {
+            get
+            {
+                if (Config.Animations.Value)
+                    return (int)(Timer / (Variation.FindTotalFrameCount() * frameDurationInSeconds));
+                else
+                    return 0;
+            }
+        }
 
         private int steps = 0; // For slower fixed update
 
         void Start()
         {
-            Core.Instance.OnUpdateDesignations += onUpdateDesignations;
-            onUpdateDesignations();
+            if (!IsRemote)
+            {
+                Core.Instance.OnUpdateDesignations += OnUpdateDesignations;
+            }
+            OnUpdateDesignations();
+
+            if (Variation != null)
+            {
+                TextMeshPro tmp = GetComponent<TextMeshPro>();
+                if (tmp != null)
+                {
+                    tmp.fontStyle = FontStyles.Normal;
+                    tmp.characterSpacing = 0;
+                }
+            }
         }
 
         void OnDestroy()
         {
-            Core.Instance.OnUpdateDesignations -= onUpdateDesignations;
+            Core.Instance.OnUpdateDesignations -= OnUpdateDesignations;
         }
 
         void FixedUpdate()
         {
-            if (steps++ % 20 == 0) slowFixedUpdate();
+            //if (steps++ % 50 == 0) slowFixedUpdate();
+            CheckPlayerProps();
+
             Timer += Time.fixedDeltaTime;
 
             if (Variation == null) return;
@@ -69,50 +140,97 @@ namespace NameBending
             Render();
         }
 
-        void slowFixedUpdate()
+        void CheckPlayerProps()
         {
             if (!PhotonNetwork.InRoom) return;
 
-            FetchVariation();
+            foreach (Player player in PlayerManager.Instance.AllPlayers)
+            {
+                if (player.Controller.controllerType == Il2CppRUMBLE.Players.ControllerType.Local) continue;
+                var photonOwner = player?.Controller?.PlayerNetworking?.RootPhotonView?.Owner;
+                if (photonOwner == null) continue;
+
+                string hash = photonOwner.CustomProperties["NameBending.HashCode"]?.ToString() ?? "";
+                string storedHash = "-";
+
+                if (Core.Instance.DesignationsHashes.ContainsKey(player.Controller))
+                    storedHash = Core.Instance.DesignationsHashes[player.Controller];
+
+                if (storedHash != hash)
+                {
+                    MelonCoroutines.Start(_());
+                    OnUpdateDesignations();
+                    MelonLogger.Msg("AAAAAAAAAAAAAA"); // Working on updating names in matches
+                }
+
+                IEnumerator _()
+                {
+                    yield return new WaitForFixedUpdate();
+                    Core.Instance.DesignationsHashes[player.Controller] = hash;
+                }
+            }
         }
 
-        void onUpdateDesignations()
+        public void OnUpdateDesignations()
         {
             ResetAll();
+
+            if (Config.DisableMod.Value == true) return;
+            if (!IsRemote && DesignationType is DesignationType.Name && Config.MyBentName.Value == false) return;
+            if (IsRemote && DesignationType is DesignationType.Name && Config.OtherBentNames.Value == false) return;
+            if (!IsRemote && DesignationType is DesignationType.Title && Config.MyBentTitle.Value == false) return;
+            if (IsRemote && DesignationType is DesignationType.Title && Config.OtherBentTitles.Value == false) return;
+
             Variation = null;
             FetchVariation();
             ApplyImages();
             Timer = 0f;
+
+            TextMeshPro tmp = GetComponent<TextMeshPro>();
+            if (tmp != null && Variation != null)
+                tmp.enableAutoSizing = Variation.AutoScaling;
         }
 
         public void FetchVariation()
         {
-            if (IsLocal)
+            if (!IsRemote)
             {
                 if (DesignationType == DesignationType.Name)
                     Variation = Core.Instance.ActiveNameVariation;
                 if (DesignationType == DesignationType.Title)
                     Variation = Core.Instance.ActiveTitleVariation;
+
+                if (Variation == null)
+                {
+                    SetText(unbentText);
+                }
             }
             else
             {
-                var fetchedVariation = photonOwner.CustomProperties["NameBending." + typeString];
-                string fetchedVariationString = null;
-                if (fetchedVariation != null)
+                if (photonOwner != null)
                 {
-                    fetchedVariationString = fetchedVariation.ToString();
-                    Variation = JsonConvert.DeserializeObject<Variation>(fetchedVariationString);
+                    var fetchedVariation = photonOwner.CustomProperties["NameBending." + typeString];
+                    string fetchedVariationString = null;
+                    if (fetchedVariation != null)
+                    {
+                        fetchedVariationString = fetchedVariation.ToString();
+                        if (fetchedVariationString == null || fetchedVariationString == "None")
+                        {
+                            if (!String.IsNullOrEmpty(unbentText))
+                                SetText(unbentText);
+                        }
+                        Variation = JsonConvert.DeserializeObject<Variation>(fetchedVariationString);
+                    }
                 }
-
-                // TODO
-                //if (ModUISettings.SaveNamesToFiles && !Variation.ProhibitCaching)
-                //    cacheVariation(Variation);
             }
 
             if (Variation != null)
             {
                 Variation.OwnerComponent = this;
-                if (Variation.EnableFields) Variation.FindAllFieldInstances();
+                if (Variation.EnableFields && !Variation.FieldInstancesFound) Variation.FindAllFieldInstances();
+                Variation.DownloadAllImages();
+                if (Config.SaveNamesToFiles.Value && !Variation.ProhibitCaching)
+                    cacheVariation(Variation);
             }
         }
 
@@ -149,17 +267,26 @@ namespace NameBending
             mat.mainTexture = Core.Instance.CachedLoadingTexture;
             planeGO.GetComponent<Renderer>().material = mat;
 
+            if (IsUI) planeGO.layer = LayerMask.NameToLayer("UI");
+
             // Track the image for later reset
             BentImage newBentImage = planeGO.AddComponent<BentImage>();
             newBentImage.ImageInfo = imageInfo;
+            newBentImage.ParentComponent = this;
             BentImages.Add(newBentImage);
+            Core.Instance.BentImages.Add(newBentImage);
         }
 
         void cacheVariation(Variation variation)
         {
             string fileText = variation.SerializedJson;
-            string dir = Path.Combine("UserData", Core.Instance.ModFolder, "saved_names");
-            string file = Path.Combine(dir, variation.GetJsonPropertiesHashCode().ToString() + ".json");
+            string dir = Path.Combine(UserDataPath, "saved_names");
+
+            string hash = variation.GetJsonPropertiesHashCode().ToString();
+            string ownerName = HelperFunctions.SanitizeString(variation.Owner.Data.GeneralData.PublicUsername);
+            string ownerID = HelperFunctions.SanitizeString(variation.Owner.Data.GeneralData.PlayFabMasterId);
+
+            string file = Path.Combine(dir, $"{ownerName}|{ownerID} - {hash}.json");
             if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
             File.WriteAllText(file, fileText);
         }
@@ -185,7 +312,7 @@ namespace NameBending
                 {
                     string frame = Variation.Frames[prevModifierIndex];
                     if (Variation.EnableFields) frame = ProcessFields(prevModifierIndex, Variation);
-                    SetText(frame);
+                    SetText(truncateText(frame));
                 }
             }
             catch { }
@@ -265,6 +392,12 @@ namespace NameBending
             }
         }
 
+        string truncateText(string text)
+        {
+            if (Config.TruncationLength.Value <= 0) return text;
+            return text.Substring(0, Config.TruncationLength.Value);
+        }
+
         public void SetDepth(float depth)
         {
             transform.localPosition = new Vector3(transform.localPosition.x, transform.localPosition.y, depth / 10f);
@@ -281,6 +414,10 @@ namespace NameBending
         public void ResetImages()
         {
             List<BentImage> resetImages = new List<BentImage>();
+
+            if (BentImages.Count == 0)
+                BentImages.AddRange(GetComponentsInChildren<BentImage>());
+
             foreach (var i in BentImages)
             {
                 i.Reset();
@@ -321,9 +458,9 @@ namespace NameBending
                     if (writePos > inputFrame.Length) break;
                     outputFrame += inputFrame.Substring(writePos, currentInstance.StartPos - writePos);
 
-                    if (!ownerField.IsReferential)
+                    if (!ownerField.IsReferential && !ownerField.IsFactory)
                     {
-                        if (currentInstance.SetTo == null)
+                        if (!currentInstance.IsSetter)
                             ownerField.SetValueUntyped(currentValue);
                         else ownerField.SetValueUntyped(currentInstance.SetTo);
                     }
@@ -355,16 +492,29 @@ namespace NameBending
     public class BentImage : MonoBehaviour
     {
         public ImageInfo ImageInfo;
+        public NameBend ParentComponent;
         public object SetTextureRoutine;
         public bool IsReset = false;
         float timer = 0f;
         int currentFrameIndex = 0;
-        Material material => GetComponent<Renderer>().material;
+        Material material
+        {
+            get
+            {
+                if (this != null && gameObject != null)
+                {
+                    Renderer renderer = GetComponentInChildren<Renderer>();
+                    if (renderer != null)
+                        return renderer.material;
+                }
+                return null;
+            }
+        }
 
         public void Update()
         {
-            if (Input.GetKeyDown(KeyCode.I)) Censor();
-            if (Input.GetKeyDown(KeyCode.O)) Uncensor();
+            if (Config.DisableMod.Value) return;
+            if (Config.Images.Value == false) return;
 
             ImageInfo imageInfoToUse = ImageInfo;
             if (!imageInfoToUse.TextureDownloaded)
@@ -397,8 +547,6 @@ namespace NameBending
 
         public void Reset()
         {
-            if (Input.GetKeyDown(KeyCode.Escape) && Input.GetKeyUp(KeyCode.Escape)) Update();
-
             if (SetTextureRoutine != null)
             {
                 MelonCoroutines.Stop(SetTextureRoutine);
@@ -426,6 +574,11 @@ namespace NameBending
                 if (tries++ >= 500) yield break;
                 yield return new WaitForSeconds(0.1f);
             }
+            while (material == null)
+            {
+                if (tries++ >= 500) yield break;
+                yield return new WaitForSeconds(0.1f);
+            }
             if (!ImageInfo.isGIF) material.mainTexture = ImageInfo.Texture;
             else material.mainTexture = ImageInfo.Frames[index].Texture;
         }
@@ -442,6 +595,17 @@ namespace NameBending
 
             RestartFrames();
         }
+        public void CensorIfNeeded()
+        {
+            if (ImageInfo.Censored && !ImageInfo.ForceUncensor)
+            {
+                ImageInfo.UndownloadImage();
+
+                ImageInfo.Texture = Core.Instance.CachedCensoredTexture;
+                ImageInfo.TextureDownloaded = true;
+                RestartFrames();
+            }
+        }
 
         public void Uncensor()
         {
@@ -454,6 +618,43 @@ namespace NameBending
             ImageInfo.DownloadCoroutine = MelonCoroutines.Start(ImageInfo.DownloadImage());
 
             RestartFrames();
+        }
+
+        public void UncensorIfNeeded()
+        {
+            if (!ImageInfo.Censored || ImageInfo.ForceUncensor)
+            {
+                ImageInfo.UndownloadImage();
+
+                ImageInfo.Censored = false;
+
+                if (ImageInfo.DownloadCoroutine != null) MelonCoroutines.Stop(ImageInfo.DownloadCoroutine);
+                ImageInfo.DownloadCoroutine = MelonCoroutines.Start(ImageInfo.DownloadImage());
+
+                RestartFrames();
+            }
+        }
+
+        public void SetMipmapBias(float bias)
+        {
+            foreach (FrameData frame in ImageInfo.Frames)
+                frame.Texture.mipMapBias = bias;
+        }
+
+        public void SetOpacity(float opacity)
+        {
+            material.SetFloat("_Opacity", opacity);
+        }
+
+        public IEnumerator FadeWithTag()
+        {
+            float endTime = Time.time + ParentComponent.ParentTag.playerNameFadeOutDuration;
+            while (Time.time < endTime + 0.1f)
+            {
+                float tagOpacity = ParentComponent.ParentTag.playerNameplateFrame.GetComponent<Renderer>().material.GetFloat("_Opacity");
+                SetOpacity(tagOpacity);
+                yield return null;
+            }
         }
     }
 }
