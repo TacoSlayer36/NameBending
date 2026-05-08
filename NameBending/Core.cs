@@ -12,9 +12,12 @@ using Il2CppPhoton.Pun;
 using System.Collections;
 using HarmonyLib;
 using UnityEngine.UI;
-using UIFramework;
 using System.Net.Http;
 using Il2CppRUMBLE.Players.Subsystems;
+using System.Text;
+using System.Security.Cryptography;
+using Il2CppExitGames.Client.Photon;
+using Il2CppRUMBLE.Interactions.InteractionBase;
 
 [assembly: MelonInfo(typeof(NameBending.Core), NameBending.BuildInfo.Name, NameBending.BuildInfo.Version, NameBending.BuildInfo.Author)]
 [assembly: MelonGame("Buckethead Entertainment", "RUMBLE")]
@@ -32,11 +35,31 @@ public static class BuildInfo
     public const string Description = "Change your name and title to anything you like";
 }
 
+/* TODO:
+ * More variation weight fields
+ * More regular fields
+ * Fix nested field bugs
+ * Fix interpolation with nested fields
+ *
+ * 
+ * TO TEST:
+ * Save names to file feature
+ * Changing names in matches
+ * Variation weighting with fields
+*/
+
 public partial class Core : MelonMod
 {
     public static Core Instance;
 
     bool globalInit = false;
+    public static string CurrentScene = "Loader";
+    public static bool IsInMatch => Core.CurrentScene.StartsWith("Map") && PhotonNetwork.PlayerList.Count == 2;
+
+    public const byte EventNumber = 31;
+    public bool EventRaised = false;
+    public static string OpponentPhotonName = null;
+    public static string OpponentPhotonTitle = null;
 
     public GameObject ModParent;
     public GameObject localNameplateImageObject;
@@ -46,6 +69,7 @@ public partial class Core : MelonMod
 
     public static readonly HttpClient _http = new();
     public static string UserDataPath => Path.Combine("UserData", BuildInfo.Name);
+    public const int AltTextCharLimit = 71;
 
     public enum DesignationType
     {
@@ -55,7 +79,6 @@ public partial class Core : MelonMod
 
     string nameConfigFileName = "CustomBentName";
     string titleConfigFileName = "CustomBentTitle";
-    public bool HasSimpleConfigFile = false;
     public bool HasNameConfigFile = false;
     public bool HasTitleConfigFile = false;
 
@@ -70,7 +93,17 @@ public partial class Core : MelonMod
     int nameVariationIndex = 0;
     int titleVariationIndex = 0;
 
-    public int MyDesignationsHash => HashCode.Combine(ActiveNameVariation?.GetJsonPropertiesHashCode() ?? 0, ActiveTitleVariation?.GetJsonPropertiesHashCode() ?? 0);
+    public string MyDesignationsHash
+    {
+        get
+        {
+            string hashString = (ActiveNameVariation?.GetJsonPropertiesHashCode() + ActiveTitleVariation?.GetJsonPropertiesHashCode()) ?? "";
+
+            byte[] inputBytes = Encoding.UTF8.GetBytes(hashString);
+            byte[] hashBytes = SHA256.HashData(inputBytes);
+            return Convert.ToHexString(hashBytes).Substring(0, 9);
+        }
+    }
     public Dictionary<PlayerController, string> DesignationsHashes = new();
 
     public List<NameBend> NameBends = new();
@@ -87,11 +120,12 @@ public partial class Core : MelonMod
     long lastDesignationUpdate = 0;
 
     public List<TMP_FontAsset> CachedFontAssets = new List<TMP_FontAsset>();
-    
+
     public Shader CachedImageShader;
     public List<FrameData> CachedLoadingFrames;
     public Texture2D CachedCensoredTexture;
     public Texture2D CachedLoadingTexture;
+    public Texture2D CachedFailedTexture;
 
     public Dictionary<string, List<FrameData>> CachedImages = new();
 
@@ -108,14 +142,17 @@ public partial class Core : MelonMod
         }
     }
 
-    [HarmonyPatch(typeof(PlayerNameTag), nameof(PlayerNameTag.FadePlayerNameTag), new Type[] { typeof(bool) })]
+    [HarmonyPatch(typeof(PlayerNameTag), nameof(PlayerNameTag.ChangeOpacity), new Type[] { typeof(float) })]
     public static class nametagopacity
     {
-        private static void Postfix(ref PlayerNameTag __instance)
+        private static void Postfix(ref PlayerNameTag __instance, ref float alpha)
         {
             foreach (NameBend nameBend in __instance.GetComponentsInChildren<NameBend>())
-                foreach (BentImage image in nameBend.BentImages)
-                    MelonCoroutines.Start(image.FadeWithTag());
+                if (nameBend != null && !nameBend.IsScreenSpace)
+                {
+                    foreach (BentImage image in nameBend.BentImages)
+                        image.SetOpacity(alpha);
+                }
         }
     }
 
@@ -123,35 +160,52 @@ public partial class Core : MelonMod
     {
         PlayerNameTag nameTag = plate.GetComponent<PlayerNameTag>();
         nameTag.RefreshNameTag();
-        Il2CppPhoton.Realtime.Player photonOwner = null;
 
-        int tries = 0;
-        if (!isLocal)
+        foreach (TextMeshPro tmp in plate.GetComponentsInChildren<TextMeshPro>())
         {
-            while (photonOwner?.CustomProperties == null || tries++ < 20)
-            {
-                photonOwner = player?.Controller?.gameObject?.GetComponent<PhotonView>()?.Owner;
-                yield return new WaitForSeconds(0.25f);
-            }
+            tmp.fontStyle = FontStyles.Normal;
+            tmp.characterSpacing = 0;
         }
 
-        NameBend nameComponent = plate.transform.GetChild(0).gameObject.AddComponent<NameBend>();
-        nameComponent.IsLocal = isLocal;
-        nameComponent.IsPlayer = isPlayer;
-        nameComponent.IsUI = isUI;
-        nameComponent.DesignationType = DesignationType.Name;
-        nameComponent.Owner = player;
-        nameComponent.ApplyImages();
-        Core.Instance.NameBends.Add(nameComponent);
+        MelonCoroutines.Start(applyWhenAble(DesignationType.Name));
+        MelonCoroutines.Start(applyWhenAble(DesignationType.Title));
+        yield break;
 
-        NameBend titleComponent = plate.transform.GetChild(2).gameObject.AddComponent<NameBend>();
-        titleComponent.IsLocal = isLocal;
-        titleComponent.IsPlayer = isPlayer;
-        titleComponent.IsUI = isUI;
-        titleComponent.DesignationType = DesignationType.Title;
-        titleComponent.Owner = player;
-        titleComponent.ApplyImages();
-        Core.Instance.NameBends.Add(titleComponent);
+        IEnumerator applyWhenAble(DesignationType type)
+        {
+            if (!isLocal)
+            {
+                Il2CppPhoton.Realtime.Player photonOwner = null;
+
+                int tries = 0;
+                while (tries++ < 20)
+                {
+                    if (photonOwner?.CustomProperties != null) break;
+                    if (type is DesignationType.Name && !String.IsNullOrEmpty(Core.OpponentPhotonName)) break;
+                    if (type is DesignationType.Title && !String.IsNullOrEmpty(Core.OpponentPhotonTitle)) break;
+
+                    foreach (var photonPlayer in PhotonNetwork.PlayerList)
+                    {
+                        if (player?.Data?.GeneralData?.actorNo == photonPlayer.ActorNumber)
+                        {
+                            photonOwner = photonPlayer;
+                            break;
+                        }
+                    }
+                    yield return new WaitForSeconds(0.25f);
+                }
+            }
+
+            int childIndex = type is DesignationType.Name ? 0 : 2;
+            NameBend component = plate.transform.GetChild(childIndex).gameObject.AddComponent<NameBend>();
+            component.IsLocal = isLocal;
+            component.IsPlayer = isPlayer;
+            component.IsScreenSpace = isUI;
+            component.DesignationType = type;
+            component.Owner = player;
+            component.ApplyImages();
+            Core.Instance.NameBends.Add(component);
+        }
     }
 
     public void ApplyComponentsToPlate(Il2CppRUMBLE.Players.Player player, bool isPlayer, bool isLocal, bool isUI)
@@ -160,7 +214,7 @@ public partial class Core : MelonMod
         MelonCoroutines.Start(ApplyComponentsToPlate(plate, player, isPlayer, isLocal, isUI));
     }
 
-    public Variation PickVariation(Root root, DesignationType designationType, bool seeded = true)
+    public Variation PickVariation(Root root, DesignationType designationType)
     {
         if (root == null) return null;
 
@@ -169,18 +223,6 @@ public partial class Core : MelonMod
         if (root.DoRandomVariations)
         {
             System.Random randy = new System.Random();
-
-            if (seeded)
-            {
-                // Use current Unix time in decaseconds as the seed
-                long unixMillis = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-                long tenSecondSeed = unixMillis / 10000;
-                randy = new System.Random((int)(tenSecondSeed & 0xFFFFFFFF));
-            }
-            else
-            {
-                randy = new System.Random();
-            }
 
             double totalWeight = root.Variations.Sum(v => v.GetWeightFromString());
             double randomValue = randy.NextDouble() * totalWeight;
@@ -205,6 +247,9 @@ public partial class Core : MelonMod
             if (designationType == DesignationType.Title) variation = root.Variations[titleVariationIndex = (titleVariationIndex + 1) % root.Variations.Count];
         }
 
+        if (Config.ForceVariationAt.Value >= 0 && Config.ForceVariationAt.Value < root.Variations.Count)
+            variation = root.Variations[Config.ForceVariationAt.Value];
+
         if (variation == null) return null;
 
         variation.DesignationType = designationType == DesignationType.Name ? "Name" : "Title";
@@ -215,6 +260,8 @@ public partial class Core : MelonMod
     public override void OnLateInitializeMelon()
     {
         Instance = this;
+        //PhotonNetwork.NetworkingClient.EventReceived += (Action<EventData>)EventReceived;
+
         Config.SetUpUI();
         loadFonts();
         loadShader();
@@ -223,18 +270,43 @@ public partial class Core : MelonMod
 
     public override void OnSceneWasUnloaded(int buildIndex, string sceneName)
     {
+        EventRaised = false;
+        OpponentPhotonName = null;
+        OpponentPhotonTitle = null;
         GameObject.Destroy(MatchInfoBoard.PlateClone1);
         GameObject.Destroy(MatchInfoBoard.PlateClone2);
+
+        MelonCoroutines.Start(listenForLandButton("FlatLand"));
+        MelonCoroutines.Start(listenForLandButton("VoidLand"));
+        IEnumerator listenForLandButton(string landType)
+        {
+            yield return new WaitForSeconds(3f);
+            GameObject.Find(landType)?.
+                GetComponentInChildren<InteractionButton>().
+                onPressed.
+                AddListener(new System.Action(() =>
+                {
+                    MelonCoroutines.Start(OnLandEntered());
+                }));
+            yield break;
+        }
+    }
+    private IEnumerator OnLandEntered()
+    {
+        yield return new WaitForSeconds(1.5f);
+        ModParent?.SetActive(true);
     }
 
     public override void OnSceneWasLoaded(int buildIndex, string sceneName)
     {
+        CurrentScene = sceneName;
+
         if (sceneName == "Gym")
         {
             if (!globalInit)
             {
                 globalInit = true;
-                Config.OnModSaved();
+                Config.OnPrefsSaved();
                 MelonCoroutines.Start(MatchInfoBoard.FindMatchInfoBoard());
             }
 
@@ -253,7 +325,6 @@ public partial class Core : MelonMod
         IEnumerator _()
         {
             yield return new WaitForSeconds(0.5f);
-            SetPlatePreview(Config.NameplatePreview.Value);
             readDesignationFiles();
             UpdateDesignations();
         }
@@ -265,19 +336,19 @@ public partial class Core : MelonMod
 
         if (Input.GetKeyDown(Config.RefreshHotkeyCode))
         {
-            long cooldown = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() - lastDesignationUpdate;
-
             readDesignationFiles();
             UpdateDesignations();
         }
     }
-
-    public static void UpdateDesignations(UIFController.ButtonEntry _)
-    {
-        Instance.UpdateDesignations();
-    }
     public void UpdateDesignations()
     {
+        long cooldown = 3000 - (DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() - lastDesignationUpdate);
+        if (cooldown > 0 && PhotonNetwork.InRoom)
+        {
+            Debug.Error($"Please wait {Mathf.Round(cooldown / 1000).ToString("0")} seconds before updating your name again");
+            return;
+        }
+
         if (globalInit)
         {
             string message = "Updating your name and title...";
@@ -287,34 +358,99 @@ public partial class Core : MelonMod
             Debug.Log(message);
         }
 
-        if (NameRoot != null) ActiveNameVariation = PickVariation(NameRoot, DesignationType.Name, PhotonNetwork.InRoom);
+        if (NameRoot != null && Config.MyBentName.Value && !Config.DisableMod.Value)
+            ActiveNameVariation = PickVariation(NameRoot, DesignationType.Name);
         else ActiveNameVariation = null;
 
-        if (TitleRoot != null) ActiveTitleVariation = PickVariation(TitleRoot, DesignationType.Title, PhotonNetwork.InRoom);
+        if (TitleRoot != null && Config.MyBentTitle.Value && !Config.DisableMod.Value)
+            ActiveTitleVariation = PickVariation(TitleRoot, DesignationType.Title);
         else ActiveTitleVariation = null;
 
-        if (ActiveNameVariation != null && Config.MyAltName.Value)
+        if (ActiveTitleVariation != null) ActiveTitleVariation.MarkTitleCounterfeit();
+
+        string altText = PlayerManager.Instance.LocalPlayer.Data.GeneralData.PublicUsername;
+        if (Config.EnableSimpleConfig.Value && !String.IsNullOrEmpty(Config.SimpleAltText.Value))
         {
-            string altText = ActiveNameVariation.AltText;
-            if (!String.IsNullOrWhiteSpace(altText) && altText.Length <= 71)
-                PlayerManager.Instance.LocalPlayer.Data.GeneralData.PublicUsername = altText;
+            altText = Config.SimpleAltText.Value;
         }
+        else if (ActiveNameVariation != null)
+        {
+            altText = ActiveNameVariation.AltText;
+        }
+
+        if (Config.MyAltName.Value && !String.IsNullOrWhiteSpace(altText) && altText.Length <= Core.AltTextCharLimit)
+            PlayerManager.Instance.LocalPlayer.Data.GeneralData.PublicUsername = altText;
+
+        if (altText.Length > Core.AltTextCharLimit)
+            Debug.Error($"Alt text cannot be more than {Core.AltTextCharLimit} characters");
 
         if (PhotonNetwork.InRoom)
         {
-            if (ActiveNameVariation != null) MelonCoroutines.Start(AddLocalProp("Name", ActiveNameVariation));
-            if (ActiveTitleVariation != null) MelonCoroutines.Start(AddLocalProp("Title", ActiveTitleVariation));
-            MelonCoroutines.Start(AddLocalProp("HashCode", MyDesignationsHash.ToString()));
+            MelonCoroutines.Start(AddLocalProp("Name", GetVariationString(ActiveNameVariation)));
+            MelonCoroutines.Start(AddLocalProp("Title", GetVariationString(ActiveTitleVariation)));
+            MelonCoroutines.Start(AddLocalProp("HashCode", MyDesignationsHash));
         }
 
         lastDesignationUpdate = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
 
         OnUpdateDesignations?.Invoke();
+
+
     }
 
-    public static void ClearImageCache(UIFController.ButtonEntry _)
+    public string GetVariationString(Variation variation)
+    {
+        if (variation == null)
+            return "None";
+
+        if (variation.DesignationType == "Name")
+
+        {
+            if (Config.EnableSimpleConfig.Value && !String.IsNullOrEmpty(Config.SimpleNameBend.Value))
+                return "{\"frames\":{\"0\":\"" + Config.SimpleNameBend.Value + "\"}}";
+        }
+
+        if (variation.DesignationType == "Title")
+        {
+            if (Config.EnableSimpleConfig.Value && !String.IsNullOrEmpty(Config.SimpleTitleBend.Value))
+                return "{\"frames\":{\"0\":\"" + Config.SimpleTitleBend.Value + "\"}}";
+        }
+
+        return variation.SerializedJson;
+    }
+
+    public string GetVariationHash(Variation variation)
+    {
+        if (variation == null)
+            return "";
+
+        if (variation.DesignationType == "Name")
+        {
+            if (Config.EnableSimpleConfig.Value && !String.IsNullOrEmpty(Config.SimpleNameBend.Value))
+            {
+                byte[] inputBytes = Encoding.UTF8.GetBytes(Config.SimpleNameBend.Value);
+                byte[] hashBytes = SHA256.HashData(inputBytes);
+                return Convert.ToHexString(hashBytes).Substring(0, 9);
+            }
+        }
+
+        if (variation.DesignationType == "Title")
+        {
+            if (Config.EnableSimpleConfig.Value && !String.IsNullOrEmpty(Config.SimpleTitleBend.Value))
+            {
+                byte[] inputBytes = Encoding.UTF8.GetBytes(Config.SimpleTitleBend.Value);
+                byte[] hashBytes = SHA256.HashData(inputBytes);
+                return Convert.ToHexString(hashBytes).Substring(0, 9);
+            }
+        }
+
+        return variation.GetJsonPropertiesHashCode();
+    }
+
+    public static void ClearImageCache()
     {
         Core.Instance.CachedImages.Clear();
+        Debug.Log("Cleared image cache");
     }
 
     void readDesignationFiles()
@@ -332,15 +468,8 @@ public partial class Core : MelonMod
                 fileName = nameConfigFileName; //"CustomBentName"
                 break;
             case DesignationType.Title:
-                fileName = titleConfigFileName ; //"CustomBentTitle"
+                fileName = titleConfigFileName; //"CustomBentTitle"
                 break;
-        }
-
-        if (File.Exists(Path.Combine(UserDataPath, "SimpleConfig.txt")))
-        {
-            HasSimpleConfigFile = true;
-            Debug.Log("Simple Config found; ignoring advanced options");
-            return; // If SimpleConfig.txt exists, we don't need to check for the other files
         }
 
         string baseDir = Path.Combine(UserDataPath, fileName);
@@ -413,12 +542,12 @@ public partial class Core : MelonMod
 
         if (File.Exists(fileTemplatePath)) // Detect if the user forgot to remove TEMPLATE from the file name ;)
         {
-            if (type == DesignationType.Name && !shownNameTemplateWarning)
+            if (type == DesignationType.Name && !shownNameTemplateWarning && NameRoot == null)
             {
                 shownNameTemplateWarning = true;
                 LoggerInstance.Warning("TEMPLATE file detected for bent name");
             }
-            else if (type == DesignationType.Title && !shownTitleTemplateWarning)
+            else if (type == DesignationType.Title && !shownTitleTemplateWarning && TitleRoot == null)
             {
                 shownTitleTemplateWarning = true;
                 LoggerInstance.Warning("TEMPLATE file detected for bent title");
@@ -526,10 +655,12 @@ public partial class Core : MelonMod
         {
             CachedLoadingTexture = RumbleModdingAPI.RMAPI.AssetBundles.LoadAssetFromStream<Texture2D>(this, "NameBending.assets.namebending", "LoadingTexture");
             CachedCensoredTexture = RumbleModdingAPI.RMAPI.AssetBundles.LoadAssetFromStream<Texture2D>(this, "NameBending.assets.namebending", "CensoredTexture");
+            CachedFailedTexture = RumbleModdingAPI.RMAPI.AssetBundles.LoadAssetFromStream<Texture2D>(this, "NameBending.assets.namebending", "FailedTexture");
             CachedLoadingFrames = HelperFunctions.ConvertGifToList(RumbleModdingAPI.RMAPI.AssetBundles.LoadAssetFromStream<TextAsset>(this, "NameBending.assets.namebending", "LoadingGif").bytes);
 
             CachedLoadingTexture.hideFlags = HideFlags.HideAndDontSave;
             CachedCensoredTexture.hideFlags = HideFlags.HideAndDontSave;
+            CachedFailedTexture.hideFlags = HideFlags.HideAndDontSave;
             foreach (FrameData frame in CachedLoadingFrames)
             {
                 frame.Texture.hideFlags = HideFlags.HideAndDontSave;
@@ -554,9 +685,16 @@ public partial class Core : MelonMod
     public IEnumerator AddLocalProp(string type, String text)
     {
         if (!PhotonNetwork.InRoom)
-        {
             yield break;
+
+        // Raise event
+        if (!Core.Instance.EventRaised && Core.IsInMatch)
+        {
+            string strToSend = $"NameBending.{type.Substring(0, 1)}|{text}";
+            //PhotonNetwork.RaiseEvent(Core.EventNumber, strToSend, new RaiseEventOptions() { Receivers = ReceiverGroup.Others }, SendOptions.SendReliable);
+            Core.Instance.EventRaised = true;
         }
+
         Il2CppPhoton.Realtime.Player local = null;
 
         int tries = 0;
@@ -568,11 +706,7 @@ public partial class Core : MelonMod
                 yield break;
             }
 
-            try
-            {
-                local = PlayerManager.instance.localPlayer.Controller.gameObject.GetComponent<PhotonView>().Owner;
-            }
-            catch { }
+            local = HelperFunctions.FindPhotonPlayerFromRumblePlayer(PlayerManager.Instance?.LocalPlayer);
             if (local == null)
             {
                 yield return new WaitForSeconds(0.2f);
@@ -580,7 +714,7 @@ public partial class Core : MelonMod
             }
         }
         Il2CppExitGames.Client.Photon.Hashtable prop = new();
-        
+
         prop["NameBending." + type] = (Il2CppSystem.Object)text;
         local.SetCustomProperties(prop);
     }
@@ -591,11 +725,26 @@ public partial class Core : MelonMod
         yield break;
     }
 
+    public void EventReceived(EventData photonEvent)
+    {
+        if (photonEvent.Code != Core.EventNumber) return;
+        if (!photonEvent.CustomData.ToString().StartsWith("NameBending.")) return;
+
+        string type = photonEvent.CustomData.ToString().Substring(12, 1);
+        string json = photonEvent.CustomData.ToString().Substring(14);
+
+        if (type == "N")
+            Core.OpponentPhotonName = json;
+
+        else if (type == "T")
+            Core.OpponentPhotonTitle = json;
+    }
+
     public void CreatePlatePreview()
     {
         if (ModParent == null)
             ModParent = new GameObject("NameBending");
-        
+
         CanvasObject = new GameObject("NameplateCanvas");
         CanvasObject.transform.SetParent(ModParent.transform);
         Canvas canvas = CanvasObject.AddComponent<Canvas>();
@@ -658,7 +807,7 @@ public partial class Core : MelonMod
 
         if (nameTag.parentController == null)
             nameTag.parentController = nameplate.GetComponentInParent<PlayerController>();
-            if (nameTag.parentController == null)
+        if (nameTag.parentController == null)
             nameTag.parentController = nameTag.followTarget.GetComponentInParent<PlayerController>();
         if (nameTag.parentController == null)
             nameTag.parentController = PlayerManager.Instance.LocalPlayer.Controller;
@@ -688,6 +837,7 @@ public partial class Core : MelonMod
     public void SetPlatePreview(bool enabled)
     {
         if (!globalInit) return;
+        if (Config.DisableMod.Value) enabled = false;
         MelonCoroutines.Start(_());
 
         IEnumerator _()

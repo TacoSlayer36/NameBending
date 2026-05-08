@@ -8,9 +8,9 @@ using UnityEngine;
 using static NameBending.Core;
 using Il2CppPhoton.Pun;
 using System.Collections;
-using Il2CppRUMBLE.Managers;
 using Il2CppRUMBLE.Players;
 using Il2CppRUMBLE.Players.Subsystems;
+using System.Linq;
 
 namespace NameBending
 {
@@ -21,11 +21,12 @@ namespace NameBending
         public Variation Variation;
         public List<BentImage> BentImages = new List<BentImage>();
         public Player Owner;
-        private Il2CppPhoton.Realtime.Player photonOwner => Owner?.Controller?.gameObject?.GetComponent<PhotonView>()?.Owner;
+        public string PhotonEventString = null;
+        private Il2CppPhoton.Realtime.Player photonOwner => HelperFunctions.FindPhotonPlayerFromRumblePlayer(Owner);
 
         public bool IsLocal = false;
         public bool IsPlayer = true;
-        public bool IsUI = true;
+        public bool IsScreenSpace = true;
 
         private PlayerNameTag _parentTag;
         public PlayerNameTag ParentTag
@@ -38,11 +39,11 @@ namespace NameBending
             }
         }
 
-        public bool IsRemote => !IsLocal && !IsUI;
+        public bool IsRemote => !IsLocal && !IsScreenSpace;
         public DesignationType DesignationType = DesignationType.Name;
         private string typeString => DesignationType == DesignationType.Name ? "Name" : "Title";
 
-        public string unbentText;
+        public string unbentText = "";
 
         private float _timer = 0f;
         public float Timer
@@ -125,6 +126,7 @@ namespace NameBending
 
         void OnDestroy()
         {
+            Core.Instance.NameBends.Remove(this);
             Core.Instance.OnUpdateDesignations -= OnUpdateDesignations;
         }
 
@@ -144,56 +146,80 @@ namespace NameBending
         {
             if (!PhotonNetwork.InRoom) return;
 
-            foreach (Player player in PlayerManager.Instance.AllPlayers)
+            if (Owner?.Controller?.controllerType == Il2CppRUMBLE.Players.ControllerType.Local) return;
+
+            if (photonOwner == null) return;
+
+            string hash = photonOwner.CustomProperties["NameBending.HashCode"]?.ToString() ?? "";
+            string storedHash = "-";
+
+            if (Core.Instance.DesignationsHashes.ContainsKey(Owner.Controller))
+                storedHash = Core.Instance.DesignationsHashes[Owner.Controller];
+
+            if (storedHash != hash || !String.IsNullOrEmpty(PhotonEventString))
             {
-                if (player.Controller.controllerType == Il2CppRUMBLE.Players.ControllerType.Local) continue;
-                var photonOwner = player?.Controller?.PlayerNetworking?.RootPhotonView?.Owner;
-                if (photonOwner == null) continue;
+                MelonCoroutines.Start(_());
+                OnUpdateDesignations();
+            }
 
-                string hash = photonOwner.CustomProperties["NameBending.HashCode"]?.ToString() ?? "";
-                string storedHash = "-";
-
-                if (Core.Instance.DesignationsHashes.ContainsKey(player.Controller))
-                    storedHash = Core.Instance.DesignationsHashes[player.Controller];
-
-                if (storedHash != hash)
-                {
-                    MelonCoroutines.Start(_());
-                    OnUpdateDesignations();
-                    MelonLogger.Msg("AAAAAAAAAAAAAA"); // Working on updating names in matches
-                }
-
-                IEnumerator _()
-                {
-                    yield return new WaitForFixedUpdate();
-                    Core.Instance.DesignationsHashes[player.Controller] = hash;
-                }
+            IEnumerator _()
+            {
+                yield return new WaitForFixedUpdate();
+                Core.Instance.DesignationsHashes[Owner.Controller] = hash;
             }
         }
 
         public void OnUpdateDesignations()
         {
-            ResetAll();
+            if (this == null) return;
 
-            if (Config.DisableMod.Value == true) return;
-            if (!IsRemote && DesignationType is DesignationType.Name && Config.MyBentName.Value == false) return;
-            if (IsRemote && DesignationType is DesignationType.Name && Config.OtherBentNames.Value == false) return;
-            if (!IsRemote && DesignationType is DesignationType.Title && Config.MyBentTitle.Value == false) return;
-            if (IsRemote && DesignationType is DesignationType.Title && Config.OtherBentTitles.Value == false) return;
+            ResetAll();
+            if (Config.DisableMod.Value) return;
 
             Variation = null;
             FetchVariation();
+
+            if (!IsRemote && DesignationType is DesignationType.Name && (!Config.MyBentName.Value || Config.DisableMod.Value)) Variation = null;
+            if (IsRemote && DesignationType is DesignationType.Name && (!Config.OtherBentNames.Value || Config.DisableMod.Value)) Variation = null;
+            if (!IsRemote && DesignationType is DesignationType.Title && (!Config.MyBentTitle.Value || Config.DisableMod.Value)) Variation = null;
+            if (IsRemote && DesignationType is DesignationType.Title && (!Config.OtherBentTitles.Value || Config.DisableMod.Value)) Variation = null;
+
+            if (Variation == null) return;
+
             ApplyImages();
             Timer = 0f;
 
             TextMeshPro tmp = GetComponent<TextMeshPro>();
             if (tmp != null && Variation != null)
+            {
                 tmp.enableAutoSizing = Variation.AutoScaling;
+                tmp.fontStyle = FontStyles.Normal;
+                tmp.characterSpacing = 0;
+            }
         }
 
         public void FetchVariation()
         {
-            if (!IsRemote)
+            if (Core.IsInMatch && Owner?.Controller?.ControllerType != Il2CppRUMBLE.Players.ControllerType.Local)
+            {
+                if (DesignationType is DesignationType.Name && Core.OpponentPhotonName != null)
+                {
+                    PhotonEventString = Core.OpponentPhotonName;
+                    Core.OpponentPhotonName = null;
+                }
+                else if (DesignationType is DesignationType.Title && Core.OpponentPhotonTitle != null)
+                {
+                    PhotonEventString = Core.OpponentPhotonTitle;
+                    Core.OpponentPhotonTitle = null;
+                }
+            }
+
+            if (!String.IsNullOrEmpty(PhotonEventString))
+            {
+                Variation = JsonConvert.DeserializeObject<Variation>(PhotonEventString);
+                PhotonEventString = null;
+            }
+            else if (!IsRemote)
             {
                 if (DesignationType == DesignationType.Name)
                     Variation = Core.Instance.ActiveNameVariation;
@@ -216,8 +242,9 @@ namespace NameBending
                         fetchedVariationString = fetchedVariation.ToString();
                         if (fetchedVariationString == null || fetchedVariationString == "None")
                         {
-                            if (!String.IsNullOrEmpty(unbentText))
-                                SetText(unbentText);
+                            SetText(unbentText);
+                            Variation = null;
+                            return;
                         }
                         Variation = JsonConvert.DeserializeObject<Variation>(fetchedVariationString);
                     }
@@ -227,10 +254,12 @@ namespace NameBending
             if (Variation != null)
             {
                 Variation.OwnerComponent = this;
+                Variation.Owner = Owner;
+                Variation.DesignationType = DesignationType.ToString();
                 if (Variation.EnableFields && !Variation.FieldInstancesFound) Variation.FindAllFieldInstances();
                 Variation.DownloadAllImages();
-                if (Config.SaveNamesToFiles.Value && !Variation.ProhibitCaching)
-                    cacheVariation(Variation);
+                if (Config.SaveNamesToFiles.Value && !Variation.ProhibitSaving)
+                    saveVariation(Variation);
             }
         }
 
@@ -251,10 +280,13 @@ namespace NameBending
 
         private void CreateImageObject(ImageInfo imageInfo, Variation containerVariation)
         {
+            if (this == null || this.transform == null) return;
+            if (Config.DisableMod.Value || !Config.Images.Value) return;
+
             // Create a new GameObject for the plane
             GameObject planeGO = GameObject.CreatePrimitive(PrimitiveType.Plane);
             planeGO.name = "BentImagePlane";
-            planeGO.transform.SetParent(this.transform, false);
+            planeGO.transform.SetParent(transform, false);
 
             // Set position and scale from ImageInfo
             float zDepth = (containerVariation.GetImageInfoIndex(imageInfo) + 1) * -0.0015f;
@@ -267,7 +299,7 @@ namespace NameBending
             mat.mainTexture = Core.Instance.CachedLoadingTexture;
             planeGO.GetComponent<Renderer>().material = mat;
 
-            if (IsUI) planeGO.layer = LayerMask.NameToLayer("UI");
+            if (IsScreenSpace) planeGO.layer = LayerMask.NameToLayer("UI");
 
             // Track the image for later reset
             BentImage newBentImage = planeGO.AddComponent<BentImage>();
@@ -277,22 +309,41 @@ namespace NameBending
             Core.Instance.BentImages.Add(newBentImage);
         }
 
-        void cacheVariation(Variation variation)
+        void saveVariation(Variation variation)
         {
-            string fileText = variation.SerializedJson;
+            if (variation == null) return;
+
+            string fileText = variation.SerializedJsonIndented;
             string dir = Path.Combine(UserDataPath, "saved_names");
 
-            string hash = variation.GetJsonPropertiesHashCode().ToString();
+            string hash = variation.GetJsonPropertiesHashCode();
             string ownerName = HelperFunctions.SanitizeString(variation.Owner.Data.GeneralData.PublicUsername);
-            string ownerID = HelperFunctions.SanitizeString(variation.Owner.Data.GeneralData.PlayFabMasterId);
+            string ownerID = variation.Owner.Data.GeneralData.PlayFabMasterId;
 
-            string file = Path.Combine(dir, $"{ownerName}|{ownerID} - {hash}.json");
+            string file = Path.Combine(dir, $"{ownerName}, {ownerID} - {variation.DesignationType} {hash}.json");
             if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
             File.WriteAllText(file, fileText);
         }
 
         public void Render()
         {
+            bool simpleNameBend = !String.IsNullOrEmpty(Config.SimpleNameBend.Value);
+            bool simpleTitleBend = !String.IsNullOrEmpty(Config.SimpleTitleBend.Value);
+            if (Config.EnableSimpleConfig.Value)
+            {
+                if (DesignationType is DesignationType.Name && simpleNameBend)
+                {
+                    SetText(truncateText(Config.SimpleNameBend.Value));
+                    return;
+                }
+
+                if (DesignationType is DesignationType.Title && simpleTitleBend)
+                {
+                    SetText(truncateText(Config.SimpleTitleBend.Value));
+                    return;
+                }
+            }
+
             if (frameDurationInSeconds > 0)
             {
                 if (Variation.LoopFrames)
@@ -354,6 +405,8 @@ namespace NameBending
 
         public void SetText(string text)
         {
+            if (String.IsNullOrEmpty(text)) return;
+
             TextMeshProUGUI textMeshProUGUI = gameObject.GetComponent<TextMeshProUGUI>();
             TextMeshPro textMeshPro = gameObject.GetComponent<TextMeshPro>();
 
@@ -371,6 +424,8 @@ namespace NameBending
 
         public void SetFont(TMP_FontAsset font)
         {
+            if (this == null || this.gameObject == null) return;
+
             TextMeshProUGUI textMeshProUGUI = gameObject.GetComponent<TextMeshProUGUI>();
             TextMeshPro textMeshPro = gameObject.GetComponent<TextMeshPro>();
 
@@ -414,9 +469,11 @@ namespace NameBending
         public void ResetImages()
         {
             List<BentImage> resetImages = new List<BentImage>();
+            if (this == null || this.gameObject == null) return;
 
-            if (BentImages.Count == 0)
-                BentImages.AddRange(GetComponentsInChildren<BentImage>());
+            BentImage[] bentImages = GetComponentsInChildren<BentImage>();
+            if (BentImages.Count == 0 && bentImages.Length > 0)
+                BentImages.AddRange(bentImages);
 
             foreach (var i in BentImages)
             {
@@ -511,6 +568,11 @@ namespace NameBending
             }
         }
 
+        void OnDestroy()
+        {
+            Core.Instance.BentImages.Remove(this);
+        }
+
         public void Update()
         {
             if (Config.DisableMod.Value) return;
@@ -522,7 +584,7 @@ namespace NameBending
                 imageInfoToUse = ImageInfo.GetLoadingGif();
             }
 
-            if (imageInfoToUse.isGIF)
+            if (imageInfoToUse.IsGIF)
             {
                 timer += Time.deltaTime;
                 if (timer > imageInfoToUse.GifDuration)
@@ -579,7 +641,7 @@ namespace NameBending
                 if (tries++ >= 500) yield break;
                 yield return new WaitForSeconds(0.1f);
             }
-            if (!ImageInfo.isGIF) material.mainTexture = ImageInfo.Texture;
+            if (!ImageInfo.IsGIF) material.mainTexture = ImageInfo.Texture;
             else material.mainTexture = ImageInfo.Frames[index].Texture;
         }
 
@@ -644,17 +706,6 @@ namespace NameBending
         public void SetOpacity(float opacity)
         {
             material.SetFloat("_Opacity", opacity);
-        }
-
-        public IEnumerator FadeWithTag()
-        {
-            float endTime = Time.time + ParentComponent.ParentTag.playerNameFadeOutDuration;
-            while (Time.time < endTime + 0.1f)
-            {
-                float tagOpacity = ParentComponent.ParentTag.playerNameplateFrame.GetComponent<Renderer>().material.GetFloat("_Opacity");
-                SetOpacity(tagOpacity);
-                yield return null;
-            }
         }
     }
 }

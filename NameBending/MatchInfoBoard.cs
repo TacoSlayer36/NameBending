@@ -77,18 +77,50 @@ public static class MatchInfoBoard
 
         PlateClone1.transform.SetParent(matchInfoBoard.transform);
         PlateClone1.transform.rotation = matchInfoPlayer2Name.transform.rotation * Quaternion.Euler(0f, 180f, 0f);
-        PlateClone1.transform.localPosition = new Vector3(1.24f, 0.78f, 0f);
-        PlateClone1.transform.localScale = Vector3.one * 2f;
+        PlateClone1.transform.localPosition = new Vector3(1.37f, 0.78f, 0f);
+        PlateClone1.transform.localScale = Vector3.one * 2.22f;
 
         PlateClone2.transform.SetParent(matchInfoBoard.transform);
         PlateClone2.transform.rotation = matchInfoPlayer2Name.transform.rotation * Quaternion.Euler(0f, 180f, 0f);
-        PlateClone2.transform.localPosition = new Vector3(-1.24f, 0.78f, 0f);
-        PlateClone2.transform.localScale = Vector3.one * 2f;
+        PlateClone2.transform.localPosition = new Vector3(-1.37f, 0.78f, 0f);
+        PlateClone2.transform.localScale = Vector3.one * 2.22f;
 
         matchInfoPlayer1Name.SetActive(false);
         matchInfoPlayer2Name.SetActive(false);
         matchInfoPlayer1BP.SetActive(false);
         matchInfoPlayer2BP.SetActive(false);
+    }
+
+    public static void ResetMatchInfo()
+    {
+        GameObject.Destroy(PlateClone1);
+        GameObject.Destroy(PlateClone2);
+
+        if (matchInfoBoard == null) FindMatchInfoBoard();
+        if (matchInfoBoard != null)
+        {
+            matchInfoPlayer1Name.SetActive(true);
+            matchInfoPlayer2Name.SetActive(true);
+            matchInfoPlayer1BP.SetActive(true);
+            matchInfoPlayer2BP.SetActive(true);
+        }
+    }
+
+    public static void SetMatchInfo(bool enabled)
+    {
+        if (!enabled)
+            ResetMatchInfo();
+        else
+        {
+            if (matchInfoBoard == null)
+                FindMatchInfoBoard();
+
+            if (PlateClone1 == null || PlateClone2 == null)
+            {
+                ResetMatchInfo();
+                SetUpMatchInfo();
+            }
+        }
     }
 
     [HarmonyPatch(typeof(SlabOwnership), nameof(SlabOwnership.SetOwnership), new Type[] { typeof(Pedestal) })]
