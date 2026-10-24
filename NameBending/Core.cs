@@ -31,7 +31,7 @@ public static class BuildInfo
 {
     public const string Name = "NameBending";
     public const string Author = "TacoSlayer36";
-    public const string Version = "2.0.0";
+    public const string Version = "2.0.2";
     public const string Description = "Change your name and title to anything you like";
 }
 
@@ -307,7 +307,6 @@ public partial class Core : MelonMod
             {
                 globalInit = true;
                 Config.OnPrefsSaved();
-                MelonCoroutines.Start(MatchInfoBoard.FindMatchInfoBoard());
             }
 
             GameObject mannequinPlate = RumbleModdingAPI.RMAPI.GameObjects.Gym.INTERACTABLES.DressingRoom.PreviewPlayerController.NameTag.GetGameObject();
@@ -316,7 +315,19 @@ public partial class Core : MelonMod
 
         if (buildIndex >= 3) // Match scenes
         {
-            MelonCoroutines.Start(MatchInfoBoard.SetUpMatchInfoDelayed(1f));
+            if (MatchInfoBoard.Board == null)
+            {
+                MelonCoroutines.Start(MatchInfoBoard.FindMatchInfoBoard(callback));
+            }
+            else
+            {
+                callback();
+            }
+            
+            void callback()
+            {
+                MelonCoroutines.Start(MatchInfoBoard.SetUpMatchInfo());
+            }
         }
 
         if (!globalInit) return;

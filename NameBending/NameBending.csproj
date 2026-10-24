@@ -14,8 +14,1549 @@
   </ItemGroup>
 
 	<ItemGroup>
-		<Reference Include="C:\Program Files (x86)\Steam\steamapps\common\RUMBLE\MelonLoader\**\*.dll" Private="false" />
-		<Reference Include="ModUI">
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\CompatibilityLayers\Demeo.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\CompatibilityLayers\IPA.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\CompatibilityLayers\Muse_Dash_Mono.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\CompatibilityLayers\Stress_Level_Zero_Il2Cpp.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\Assembly-CSharp.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\AYellowpaper.SerializedCollections.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\BitpackersASMDEF.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\BucketheadEntertainment.Plugins.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\ByteConverter.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\com.rlabrecque.steamworks.net.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\Discord.Sdk.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\EmoCompressUtilsASMDEF.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\FloatCrusher.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\HalfFloatASMDEF.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\HalFloat.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\LIV.LCK.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\LIV.LCKCore.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\LIV.LCKCore.ThirdParty.MessagePack.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\LIV.NativeAudioBridge.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\Mono.Security.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\mscorlib.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\NativeGallery.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\NaughtyAttributes.Core.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\Newtonsoft.Json.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\Oculus.Platform.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\Photon3Unity3D.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\PhotonChat.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\PhotonRealtime.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\PhotonUnityNetworking.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\PhotonUnityNetworking.Utilities.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\PhotonUtilities.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\PhotonVoice.API.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\PhotonVoice.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\PhotonVoice.PUN.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\PlayFab.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\QuatCompress.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\RUMBLE.AssetStore.ModernUIPack.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\RUMBLE.Networking.Oculus.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\RUMBLE.Platform.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\RUMBLE.Platform.Info.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\RUMBLE.Platform.Info.Steam.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\RUMBLE.Plugins.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\RUMBLE.Runtime.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\SmartLocalization.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\System.Configuration.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\System.Core.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\System.Data.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\System.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\System.Drawing.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\System.Numerics.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\System.Runtime.Serialization.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\System.Xml.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\System.Xml.Linq.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\Unity.Burst.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\Unity.Burst.Unsafe.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\Unity.Collections.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\Unity.InputSystem.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\Unity.InputSystem.ForUI.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\Unity.InternalAPIEngineBridge.004.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\Unity.Mathematics.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\Unity.Profiling.Core.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\Unity.RenderPipeline.Universal.ShaderLibrary.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\Unity.RenderPipelines.Core.Runtime.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\Unity.RenderPipelines.Core.Runtime.Shared.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\Unity.RenderPipelines.GPUDriven.Runtime.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\Unity.RenderPipelines.Universal.Runtime.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\Unity.Services.Analytics.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\Unity.Services.Core.Configuration.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\Unity.Services.Core.Device.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\Unity.Services.Core.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\Unity.Services.Core.Environments.Internal.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\Unity.Services.Core.Internal.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\Unity.Services.Core.Registration.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\Unity.Services.Core.Scheduler.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\Unity.Services.Core.Telemetry.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\Unity.Services.Core.Threading.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\Unity.TextMeshPro.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\Unity.Timeline.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\Unity.UnifiedRayTracing.Runtime.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\Unity.VisualEffectGraph.Runtime.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\Unity.XR.ARFoundation.InternalUtils.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\Unity.XR.ARSubsystems.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\Unity.XR.CompositionLayers.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\Unity.XR.CoreUtils.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\Unity.XR.Management.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\Unity.XR.OpenXR.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\Unity.XR.OpenXR.Features.ConformanceAutomation.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\Unity.XR.OpenXR.Features.MetaQuestSupport.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\Unity.XR.OpenXR.Features.MockRuntime.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\Unity.XR.OpenXR.Features.OculusQuestSupport.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\Unity.XR.OpenXR.Features.RuntimeDebugger.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\Unity.XR.Simulation.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\UnityEngine.AccessibilityModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\UnityEngine.AdaptivePerformanceModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\UnityEngine.AIModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\UnityEngine.AndroidJNIModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\UnityEngine.AnimationModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\UnityEngine.AssetBundleModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\UnityEngine.AudioModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\UnityEngine.CoreModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\UnityEngine.CrashReportingModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\UnityEngine.DirectorModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\UnityEngine.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\UnityEngine.GridModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\UnityEngine.HierarchyCoreModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\UnityEngine.IdentifiersModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\UnityEngine.ImageConversionModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\UnityEngine.IMGUIModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\UnityEngine.InputForUIModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\UnityEngine.InputLegacyModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\UnityEngine.InputModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\UnityEngine.JSONSerializeModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\UnityEngine.MultiplayerModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\UnityEngine.ParticleSystemModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\UnityEngine.Physics2DModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\UnityEngine.PhysicsModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\UnityEngine.PropertiesModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\UnityEngine.SharedInternalsModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\UnityEngine.SpatialTracking.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\UnityEngine.SpriteShapeModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\UnityEngine.SubsystemsModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\UnityEngine.TerrainModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\UnityEngine.TextCoreFontEngineModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\UnityEngine.TextCoreTextEngineModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\UnityEngine.TextRenderingModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\UnityEngine.TilemapModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\UnityEngine.UI.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\UnityEngine.UIElementsModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\UnityEngine.UIModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\UnityEngine.UnityAnalyticsCommonModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\UnityEngine.UnityAnalyticsModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\UnityEngine.UnityConsentModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\UnityEngine.UnityWebRequestModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\UnityEngine.VFXModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\UnityEngine.VideoModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\UnityEngine.VRModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\UnityEngine.XRModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\Valve.OpenXR.Utils.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\cpp2il_out\__Generated.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Cpp2IL\Plugins\Cpp2IL.Plugin.StrippedCodeRegSupport.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\Il2CppAssemblyGenerator.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\UnityDependencies\UnityEngine.AccessibilityModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\UnityDependencies\UnityEngine.AdaptivePerformanceModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\UnityDependencies\UnityEngine.AIModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\UnityDependencies\UnityEngine.AndroidJNIModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\UnityDependencies\UnityEngine.AnimationModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\UnityDependencies\UnityEngine.ARModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\UnityDependencies\UnityEngine.AssetBundleModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\UnityDependencies\UnityEngine.AudioModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\UnityDependencies\UnityEngine.ClothModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\UnityDependencies\UnityEngine.ContentLoadModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\UnityDependencies\UnityEngine.CoreModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\UnityDependencies\UnityEngine.CrashReportingModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\UnityDependencies\UnityEngine.DirectorModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\UnityDependencies\UnityEngine.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\UnityDependencies\UnityEngine.DSPGraphModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\UnityDependencies\UnityEngine.GameCenterModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\UnityDependencies\UnityEngine.GIModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\UnityDependencies\UnityEngine.GraphicsStateCollectionSerializerModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\UnityDependencies\UnityEngine.GridModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\UnityDependencies\UnityEngine.HierarchyCoreModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\UnityDependencies\UnityEngine.HierarchyModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\UnityDependencies\UnityEngine.HotReloadModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\UnityDependencies\UnityEngine.IdentifiersModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\UnityDependencies\UnityEngine.ImageConversionModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\UnityDependencies\UnityEngine.IMGUIModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\UnityDependencies\UnityEngine.InputForUIModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\UnityDependencies\UnityEngine.InputLegacyModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\UnityDependencies\UnityEngine.InputModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\UnityDependencies\UnityEngine.InsightsModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\UnityDependencies\UnityEngine.JSONSerializeModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\UnityDependencies\UnityEngine.LocalizationModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\UnityDependencies\UnityEngine.MarshallingModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\UnityDependencies\UnityEngine.MultiplayerModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\UnityDependencies\UnityEngine.ParticleSystemModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\UnityDependencies\UnityEngine.PerformanceReportingModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\UnityDependencies\UnityEngine.Physics2DModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\UnityDependencies\UnityEngine.PhysicsBackendPhysXModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\UnityDependencies\UnityEngine.PhysicsModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\UnityDependencies\UnityEngine.PropertiesModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\UnityDependencies\UnityEngine.RenderAs2DModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\UnityDependencies\UnityEngine.RuntimeInitializeOnLoadManagerInitializerModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\UnityDependencies\UnityEngine.ScreenCaptureModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\UnityDependencies\UnityEngine.ShaderRuntimeModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\UnityDependencies\UnityEngine.ShaderVariantAnalyticsModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\UnityDependencies\UnityEngine.SharedInternalsModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\UnityDependencies\UnityEngine.SpriteMaskModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\UnityDependencies\UnityEngine.SpriteShapeModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\UnityDependencies\UnityEngine.StreamingModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\UnityDependencies\UnityEngine.SubstanceModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\UnityDependencies\UnityEngine.SubsystemsModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\UnityDependencies\UnityEngine.TerrainModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\UnityDependencies\UnityEngine.TerrainPhysicsModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\UnityDependencies\UnityEngine.TextCoreFontEngineModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\UnityDependencies\UnityEngine.TextCoreTextEngineModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\UnityDependencies\UnityEngine.TextRenderingModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\UnityDependencies\UnityEngine.TilemapModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\UnityDependencies\UnityEngine.TLSModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\UnityDependencies\UnityEngine.UIElementsModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\UnityDependencies\UnityEngine.UIModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\UnityDependencies\UnityEngine.UmbraModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\UnityDependencies\UnityEngine.UnityAnalyticsCommonModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\UnityDependencies\UnityEngine.UnityAnalyticsModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\UnityDependencies\UnityEngine.UnityConnectModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\UnityDependencies\UnityEngine.UnityConsentModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\UnityDependencies\UnityEngine.UnityCurlModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\UnityDependencies\UnityEngine.UnityWebRequestAssetBundleModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\UnityDependencies\UnityEngine.UnityWebRequestAudioModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\UnityDependencies\UnityEngine.UnityWebRequestModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\UnityDependencies\UnityEngine.UnityWebRequestTextureModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\UnityDependencies\UnityEngine.UnityWebRequestWWWModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\UnityDependencies\UnityEngine.VectorGraphicsModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\UnityDependencies\UnityEngine.VehiclesModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\UnityDependencies\UnityEngine.VFXModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\UnityDependencies\UnityEngine.VideoModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\UnityDependencies\UnityEngine.VRModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\UnityDependencies\UnityEngine.WindModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\Il2CppAssemblyGenerator\UnityDependencies\UnityEngine.XRModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\MonoBleedingEdgePatches\mscorlib.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\MonoBleedingEdgePatches\System.Buffers.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\MonoBleedingEdgePatches\System.Collections.Immutable.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\MonoBleedingEdgePatches\System.ComponentModel.Composition.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\MonoBleedingEdgePatches\System.Configuration.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\MonoBleedingEdgePatches\System.Core.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\MonoBleedingEdgePatches\System.Data.DataSetExtensions.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\MonoBleedingEdgePatches\System.Data.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\MonoBleedingEdgePatches\System.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\MonoBleedingEdgePatches\System.Drawing.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\MonoBleedingEdgePatches\System.EnterpriseServices.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\MonoBleedingEdgePatches\System.IO.Compression.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\MonoBleedingEdgePatches\System.IO.Compression.FileSystem.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\MonoBleedingEdgePatches\System.Memory.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\MonoBleedingEdgePatches\System.Net.Http.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\MonoBleedingEdgePatches\System.Numerics.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\MonoBleedingEdgePatches\System.Runtime.CompilerServices.Unsafe.6.0.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\MonoBleedingEdgePatches\System.Runtime.CompilerServices.Unsafe.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\MonoBleedingEdgePatches\System.Runtime.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\MonoBleedingEdgePatches\System.Runtime.Serialization.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\MonoBleedingEdgePatches\System.Security.Cryptography.Cng.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\MonoBleedingEdgePatches\System.Security.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\MonoBleedingEdgePatches\System.ServiceModel.Internals.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\MonoBleedingEdgePatches\System.Transactions.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\MonoBleedingEdgePatches\System.Xml.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\MonoBleedingEdgePatches\System.Xml.Linq.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\NetStandardPatches\System.Configuration.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\NetStandardPatches\System.Core.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\NetStandardPatches\System.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\NetStandardPatches\System.Xml.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\SupportModules\Il2Cpp.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Dependencies\SupportModules\Mono.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\Assembly-CSharp.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\Il2CppAYellowpaper.SerializedCollections.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\Il2CppBitpackersASMDEF.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\Il2CppBucketheadEntertainment.Plugins.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\Il2CppByteConverter.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\Il2Cppcom.rlabrecque.steamworks.net.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\Il2CppDiscord.Sdk.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\Il2CppEmoCompressUtilsASMDEF.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\Il2CppFloatCrusher.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\Il2CppHalfFloatASMDEF.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\Il2CppHalFloat.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\Il2CppLIV.LCK.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\Il2CppLIV.LCKCore.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\Il2CppLIV.LCKCore.ThirdParty.MessagePack.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\Il2CppLIV.NativeAudioBridge.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\Il2CppMono.Security.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\Il2Cppmscorlib.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\Il2CppNativeGallery.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\Il2CppNaughtyAttributes.Core.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\Il2CppNewtonsoft.Json.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\Il2CppOculus.Platform.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\Il2CppPhoton3Unity3D.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\Il2CppPhotonChat.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\Il2CppPhotonRealtime.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\Il2CppPhotonUnityNetworking.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\Il2CppPhotonUnityNetworking.Utilities.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\Il2CppPhotonUtilities.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\Il2CppPhotonVoice.API.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\Il2CppPhotonVoice.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\Il2CppPhotonVoice.PUN.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\Il2CppPlayFab.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\Il2CppQuatCompress.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\Il2CppRUMBLE.AssetStore.ModernUIPack.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\Il2CppRUMBLE.Networking.Oculus.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\Il2CppRUMBLE.Platform.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\Il2CppRUMBLE.Platform.Info.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\Il2CppRUMBLE.Platform.Info.Steam.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\Il2CppRUMBLE.Plugins.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\Il2CppRUMBLE.Runtime.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\Il2CppSmartLocalization.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\Il2CppSystem.Configuration.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\Il2CppSystem.Core.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\Il2CppSystem.Data.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\Il2CppSystem.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\Il2CppSystem.Drawing.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\Il2CppSystem.Numerics.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\Il2CppSystem.Runtime.Serialization.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\Il2CppSystem.Xml.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\Il2CppSystem.Xml.Linq.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\Il2CppValve.OpenXR.Utils.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\Il2Cpp__Generated.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\Unity.Burst.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\Unity.Burst.Unsafe.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\Unity.Collections.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\Unity.InputSystem.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\Unity.InputSystem.ForUI.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\Unity.InternalAPIEngineBridge.004.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\Unity.Mathematics.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\Unity.Profiling.Core.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\Unity.RenderPipeline.Universal.ShaderLibrary.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\Unity.RenderPipelines.Core.Runtime.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\Unity.RenderPipelines.Core.Runtime.Shared.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\Unity.RenderPipelines.GPUDriven.Runtime.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\Unity.RenderPipelines.Universal.Runtime.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\Unity.Services.Analytics.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\Unity.Services.Core.Configuration.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\Unity.Services.Core.Device.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\Unity.Services.Core.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\Unity.Services.Core.Environments.Internal.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\Unity.Services.Core.Internal.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\Unity.Services.Core.Registration.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\Unity.Services.Core.Scheduler.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\Unity.Services.Core.Telemetry.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\Unity.Services.Core.Threading.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\Unity.TextMeshPro.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\Unity.Timeline.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\Unity.UnifiedRayTracing.Runtime.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\Unity.VisualEffectGraph.Runtime.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\Unity.XR.ARFoundation.InternalUtils.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\Unity.XR.ARSubsystems.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\Unity.XR.CompositionLayers.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\Unity.XR.CoreUtils.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\Unity.XR.Management.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\Unity.XR.OpenXR.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\Unity.XR.OpenXR.Features.ConformanceAutomation.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\Unity.XR.OpenXR.Features.MetaQuestSupport.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\Unity.XR.OpenXR.Features.MockRuntime.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\Unity.XR.OpenXR.Features.OculusQuestSupport.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\Unity.XR.OpenXR.Features.RuntimeDebugger.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\Unity.XR.Simulation.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\UnityEngine.AccessibilityModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\UnityEngine.AdaptivePerformanceModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\UnityEngine.AIModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\UnityEngine.AndroidJNIModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\UnityEngine.AnimationModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\UnityEngine.ARModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\UnityEngine.AssetBundleModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\UnityEngine.AudioModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\UnityEngine.ClothModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\UnityEngine.ContentLoadModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\UnityEngine.CoreModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\UnityEngine.CrashReportingModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\UnityEngine.DirectorModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\UnityEngine.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\UnityEngine.DSPGraphModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\UnityEngine.GameCenterModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\UnityEngine.GIModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\UnityEngine.GraphicsStateCollectionSerializerModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\UnityEngine.GridModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\UnityEngine.HierarchyCoreModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\UnityEngine.HierarchyModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\UnityEngine.HotReloadModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\UnityEngine.IdentifiersModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\UnityEngine.ImageConversionModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\UnityEngine.IMGUIModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\UnityEngine.InputForUIModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\UnityEngine.InputLegacyModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\UnityEngine.InputModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\UnityEngine.InsightsModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\UnityEngine.JSONSerializeModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\UnityEngine.LocalizationModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\UnityEngine.MarshallingModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\UnityEngine.MultiplayerModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\UnityEngine.ParticleSystemModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\UnityEngine.PerformanceReportingModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\UnityEngine.Physics2DModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\UnityEngine.PhysicsBackendPhysXModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\UnityEngine.PhysicsModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\UnityEngine.PropertiesModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\UnityEngine.RenderAs2DModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\UnityEngine.RuntimeInitializeOnLoadManagerInitializerModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\UnityEngine.ScreenCaptureModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\UnityEngine.ShaderRuntimeModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\UnityEngine.ShaderVariantAnalyticsModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\UnityEngine.SharedInternalsModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\UnityEngine.SpatialTracking.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\UnityEngine.SpriteMaskModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\UnityEngine.SpriteShapeModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\UnityEngine.StreamingModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\UnityEngine.SubstanceModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\UnityEngine.SubsystemsModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\UnityEngine.TerrainModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\UnityEngine.TerrainPhysicsModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\UnityEngine.TextCoreFontEngineModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\UnityEngine.TextCoreTextEngineModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\UnityEngine.TextRenderingModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\UnityEngine.TilemapModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\UnityEngine.TLSModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\UnityEngine.UI.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\UnityEngine.UIElementsModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\UnityEngine.UIModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\UnityEngine.UmbraModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\UnityEngine.UnityAnalyticsCommonModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\UnityEngine.UnityAnalyticsModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\UnityEngine.UnityConnectModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\UnityEngine.UnityConsentModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\UnityEngine.UnityCurlModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\UnityEngine.UnityWebRequestAssetBundleModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\UnityEngine.UnityWebRequestAudioModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\UnityEngine.UnityWebRequestModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\UnityEngine.UnityWebRequestTextureModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\UnityEngine.UnityWebRequestWWWModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\UnityEngine.VectorGraphicsModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\UnityEngine.VehiclesModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\UnityEngine.VFXModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\UnityEngine.VideoModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\UnityEngine.VRModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\UnityEngine.WindModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\Il2CppAssemblies\UnityEngine.XRModule.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\net35\0Harmony.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\net35\AsmResolver.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\net35\AsmResolver.DotNet.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\net35\AsmResolver.PE.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\net35\AsmResolver.PE.File.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\net35\AssetRipper.Primitives.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\net35\AssetsTools.NET.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\net35\bHapticsLib.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\net35\IndexRange.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\net35\MelonLoader.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\net35\Mono.Cecil.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\net35\Mono.Cecil.Mdb.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\net35\Mono.Cecil.Pdb.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\net35\Mono.Cecil.Rocks.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\net35\MonoMod.Backports.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\net35\MonoMod.ILHelpers.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\net35\MonoMod.RuntimeDetour.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\net35\MonoMod.Utils.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\net35\Newtonsoft.Json.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\net35\Tomlet.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\net35\ValueTupleBridge.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\net35\WebSocketDotNet.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\net472\0Harmony.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\net472\AsmResolver.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\net472\AsmResolver.DotNet.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\net472\AsmResolver.PE.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\net472\AsmResolver.PE.File.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\net472\AssetRipper.Primitives.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\net472\AssetsTools.NET.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\net472\bHapticsLib.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\net472\IndexRange.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\net472\MelonLoader.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\net472\Mono.Cecil.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\net472\Mono.Cecil.Mdb.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\net472\Mono.Cecil.Pdb.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\net472\Mono.Cecil.Rocks.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\net472\MonoMod.Backports.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\net472\MonoMod.ILHelpers.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\net472\MonoMod.RuntimeDetour.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\net472\MonoMod.Utils.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\net472\Newtonsoft.Json.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\net472\System.Buffers.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\net472\System.Memory.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\net472\System.Numerics.Vectors.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\net472\System.Runtime.CompilerServices.Unsafe.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\net472\System.ValueTuple.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\net472\Tomlet.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\net472\WebSocketDotNet.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\net6\0Harmony.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\net6\AsmResolver.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\net6\AsmResolver.DotNet.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\net6\AsmResolver.PE.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\net6\AsmResolver.PE.File.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\net6\AssetRipper.Primitives.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\net6\AssetsTools.NET.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\net6\bHapticsLib.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\net6\Iced.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\net6\Il2CppInterop.Common.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\net6\Il2CppInterop.Generator.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\net6\Il2CppInterop.HarmonySupport.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\net6\Il2CppInterop.Runtime.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\net6\IndexRange.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\net6\MelonLoader.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\net6\MelonLoader.NativeHost.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\net6\Microsoft.Bcl.AsyncInterfaces.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\net6\Microsoft.Bcl.Memory.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\net6\Microsoft.Diagnostics.NETCore.Client.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\net6\Microsoft.Diagnostics.Runtime.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\net6\Microsoft.Extensions.Configuration.Abstractions.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\net6\Microsoft.Extensions.Configuration.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\net6\Microsoft.Extensions.DependencyInjection.Abstractions.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\net6\Microsoft.Extensions.DependencyInjection.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\net6\Microsoft.Extensions.Logging.Abstractions.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\net6\Microsoft.Extensions.Logging.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\net6\Microsoft.Extensions.Options.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\net6\Microsoft.Extensions.Primitives.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\net6\Mono.Cecil.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\net6\Mono.Cecil.Mdb.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\net6\Mono.Cecil.Pdb.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\net6\Mono.Cecil.Rocks.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\net6\MonoMod.Backports.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\net6\MonoMod.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\net6\MonoMod.ILHelpers.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\net6\MonoMod.RuntimeDetour.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\net6\MonoMod.Utils.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\net6\Newtonsoft.Json.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\net6\System.Configuration.ConfigurationManager.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\net6\System.Diagnostics.DiagnosticSource.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\net6\System.Runtime.CompilerServices.Unsafe.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\net6\System.Security.Cryptography.ProtectedData.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\net6\System.Security.Permissions.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\net6\Tomlet.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\net6\UnityEngine.Il2CppAssetBundleManager.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\net6\UnityEngine.Il2CppImageConversionManager.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="C:\Program Files %28x86%29\Steam\steamapps\common\RUMBLE\MelonLoader\net6\WebSocketDotNet.dll">
+		  <Private>false</Private>
+		</Reference>
+		<Reference Include="UIFramework">
 			<HintPath>C:\Program Files (x86)\Steam\steamapps\common\RUMBLE\Mods\UIFramework.dll</HintPath>
 		</Reference>
 		<Reference Include="RumbleModdingAPI">

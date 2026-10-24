@@ -4,121 +4,139 @@ using Il2CppRUMBLE.Managers;
 using Il2CppRUMBLE.Players;
 using Il2CppRUMBLE.Players.Subsystems;
 using Il2CppRUMBLE.Slabs;
-using Il2CppTMPro;
 using MelonLoader;
-using RumbleModdingAPI;
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace NameBending;
 
 public static class MatchInfoBoard
 {
-    private static GameObject matchInfoBoard;
+    public static GameObject Board;
     private static GameObject matchInfoPlayer1Name;
     private static GameObject matchInfoPlayer2Name;
     private static GameObject matchInfoPlayer1BP;
     private static GameObject matchInfoPlayer2BP;
 
-    private static GameObject player1TagClone = null;
-    private static GameObject player2TagClone = null;
-
     public static bool HasMatchInfo = false;
     public static GameObject PlateClone1;
     public static GameObject PlateClone2;
 
-    public static IEnumerator FindMatchInfoBoard()
+    public static IEnumerator FindMatchInfoBoard(Action callback = null)
     {
-        yield return new WaitForSeconds(5f);
-
-        try
+        int tries = 0;
+        while (true)
         {
-            GameObject[] allObjects = UnityEngine.Object.FindObjectsOfType<GameObject>(true);
-            matchInfoBoard = allObjects.FirstOrDefault(go => go.name == "MatchInfoMod");
-            if (matchInfoBoard == null)
+            if (tries++ > 30)
+            {
+                HasMatchInfo = false;
+                callback?.Invoke();
                 yield break;
+            }
 
-            matchInfoPlayer1Name = matchInfoBoard.transform.Find("Player1Name")?.gameObject;
-            matchInfoPlayer2Name = matchInfoBoard.transform.Find("Player2Name")?.gameObject;
-            matchInfoPlayer1BP = matchInfoBoard.transform.Find("Player1BP")?.gameObject;
-            matchInfoPlayer2BP = matchInfoBoard.transform.Find("Player2BP")?.gameObject;
+            Board = GameObject.Find("MatchInfoMod");
+            if (Board != null) break;
 
-            HasMatchInfo = true;
+            yield return new WaitForSeconds(0.5f);
         }
-        catch
+
+        matchInfoPlayer1Name = Board.transform.Find("Player1Name")?.gameObject;
+        matchInfoPlayer2Name = Board.transform.Find("Player2Name")?.gameObject;
+        matchInfoPlayer1BP = Board.transform.Find("Player1BP")?.gameObject;
+        matchInfoPlayer2BP = Board.transform.Find("Player2BP")?.gameObject;
+
+        HasMatchInfo = true;
+        callback?.Invoke();
+    }
+
+    public static IEnumerator SetUpMatchInfo()
+    {
+        if (!Config.MatchInfoPlates.Value) yield break;
+        if (PlayerManager.Instance.AllPlayers.Count < 2) yield break;
+        if (!HasMatchInfo) yield break;
+
+        PlayerController player1 = null;
+        PlayerController player2 = null;
+
+        int tries = 0;
+        while (true)
         {
-            HasMatchInfo = false;
+            yield return new WaitForFixedUpdate();
+
+            if (tries++ > 500)
+            {
+                HasMatchInfo = false;
+                yield break;
+            }
+
+            player1 = PlayerManager.Instance?.AllPlayers[0]?.Controller;
+            player2 = PlayerManager.Instance?.AllPlayers[1]?.Controller;
+
+            if (player1 == null || player2 == null) continue;
+
+            PlateClone1 = Core.Instance.CloneNameplate(player1.transform.Find("NameTag").gameObject);
+            PlateClone2 = Core.Instance.CloneNameplate(player2.transform.Find("NameTag").gameObject);
+
+            if (PlateClone1 == null || PlateClone2 == null) continue;
+           
+            break;
+        }
+
+        SetUpMatchInfo();
+        void SetUpMatchInfo()
+        {
+            PlateClone1.SetActive(true);
+            PlateClone2.SetActive(true);
+
+            PlateClone1.transform.SetParent(Board.transform);
+            PlateClone1.transform.rotation = matchInfoPlayer2Name.transform.rotation * Quaternion.Euler(0f, 180f, 0f);
+            PlateClone1.transform.localPosition = new Vector3(1.37f, 0.78f, 0f);
+            PlateClone1.transform.localScale = Vector3.one * 2.22f;
+
+            PlateClone2.transform.SetParent(Board.transform);
+            PlateClone2.transform.rotation = matchInfoPlayer2Name.transform.rotation * Quaternion.Euler(0f, 180f, 0f);
+            PlateClone2.transform.localPosition = new Vector3(-1.37f, 0.78f, 0f);
+            PlateClone2.transform.localScale = Vector3.one * 2.22f;
+
+            matchInfoPlayer1Name.SetActive(false);
+            matchInfoPlayer2Name.SetActive(false);
+            matchInfoPlayer1BP.SetActive(false);
+            matchInfoPlayer2BP.SetActive(false);
         }
     }
 
-    public static IEnumerator SetUpMatchInfoDelayed(float delay)
-    {
-        yield return new WaitForSeconds(delay);
-        SetUpMatchInfo();
-    }
-    public static void SetUpMatchInfo()
-    {
-        if (PlayerManager.Instance.AllPlayers.Count < 2) return;
-        if (!HasMatchInfo) return;
-
-        PlayerController player1 = PlayerManager.Instance.AllPlayers[0]?.Controller;
-        PlayerController player2 = PlayerManager.Instance.AllPlayers[1]?.Controller;
-
-        PlateClone1 = Core.Instance.CloneNameplate(player1.transform.Find("NameTag").gameObject);
-        PlateClone2 = Core.Instance.CloneNameplate(player2.transform.Find("NameTag").gameObject);
-
-        PlateClone1.SetActive(true);
-        PlateClone2.SetActive(true);
-
-        PlateClone1.transform.SetParent(matchInfoBoard.transform);
-        PlateClone1.transform.rotation = matchInfoPlayer2Name.transform.rotation * Quaternion.Euler(0f, 180f, 0f);
-        PlateClone1.transform.localPosition = new Vector3(1.37f, 0.78f, 0f);
-        PlateClone1.transform.localScale = Vector3.one * 2.22f;
-
-        PlateClone2.transform.SetParent(matchInfoBoard.transform);
-        PlateClone2.transform.rotation = matchInfoPlayer2Name.transform.rotation * Quaternion.Euler(0f, 180f, 0f);
-        PlateClone2.transform.localPosition = new Vector3(-1.37f, 0.78f, 0f);
-        PlateClone2.transform.localScale = Vector3.one * 2.22f;
-
-        matchInfoPlayer1Name.SetActive(false);
-        matchInfoPlayer2Name.SetActive(false);
-        matchInfoPlayer1BP.SetActive(false);
-        matchInfoPlayer2BP.SetActive(false);
-    }
-
-    public static void ResetMatchInfo()
+    public static void ResetMatchInfo(bool nullifyBoard)
     {
         GameObject.Destroy(PlateClone1);
         GameObject.Destroy(PlateClone2);
 
-        if (matchInfoBoard == null) FindMatchInfoBoard();
-        if (matchInfoBoard != null)
+        if (Board != null)
         {
             matchInfoPlayer1Name.SetActive(true);
             matchInfoPlayer2Name.SetActive(true);
             matchInfoPlayer1BP.SetActive(true);
             matchInfoPlayer2BP.SetActive(true);
         }
+        if (nullifyBoard) Board = null;
     }
 
     public static void SetMatchInfo(bool enabled)
     {
         if (!enabled)
-            ResetMatchInfo();
+            ResetMatchInfo(true);
         else
         {
-            if (matchInfoBoard == null)
-                FindMatchInfoBoard();
+            if (Board == null)
+                MelonCoroutines.Start(FindMatchInfoBoard(callback));
 
-            if (PlateClone1 == null || PlateClone2 == null)
+            void callback()
             {
-                ResetMatchInfo();
-                SetUpMatchInfo();
+                if (PlateClone1 == null || PlateClone2 == null)
+                {
+                    ResetMatchInfo(false);
+                    MelonCoroutines.Start(SetUpMatchInfo());
+                }
             }
         }
     }
@@ -128,8 +146,19 @@ public static class MatchInfoBoard
     {
         private static void Postfix()
         {
-            PlateClone1?.GetComponentInChildren<PlayerNameTag>()?.UpdatePlayerBPText();
-            PlateClone2?.GetComponentInChildren<PlayerNameTag>()?.UpdatePlayerBPText();
+            if (!HasMatchInfo) return;
+
+            if (PlateClone1 != null)
+            {
+                PlayerNameTag nameTag = PlateClone1.GetComponentInChildren<PlayerNameTag>();
+                if (nameTag != null) nameTag.UpdatePlayerBPText();
+            }
+
+            if (PlateClone2 != null)
+            {
+                PlayerNameTag nameTag = PlateClone2.GetComponentInChildren<PlayerNameTag>();
+                if (nameTag != null) nameTag.UpdatePlayerBPText();
+            }
         }
     }
 }

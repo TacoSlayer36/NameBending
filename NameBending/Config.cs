@@ -2,6 +2,7 @@
 using System;
 using System.IO;
 using UIFramework;
+using UIFramework.Models;
 using UnityEngine;
 
 namespace NameBending;
@@ -35,7 +36,7 @@ public static class Config
     public static int prevForceVariation = -1;
     public static bool prevTrustAll = false;
 
-    public static UIFModel.ModelMod Me;
+    public static MelonModel Me;
 
     public static MelonPreferences_Category Cat_NamePlate;
     public static MelonPreferences_Entry<bool> NameplatePreview;
@@ -107,7 +108,7 @@ public static class Config
         Disclaimer = Cat_Advanced.CreateEntry("Disclaimer", false, "Accept Disclaimer", "I understand that by disabling moderation features, other users can subject me to any image on the internet. These images may be graphic, NSFW, offensive, triggering to photosensitivity, or otherwise unwanted.");
         UI.CreateButtonEntry(Cat_Advanced, "Clear", "Clear Image Cache", "Remove any stored data about existing and previous nameplate images", Core.ClearImageCache);
 
-        Me = UI.Register((MelonBase)Core.Instance, Cat_NamePlate, Cat_SimpleConfig, Cat_Toggles, Cat_Advanced);
+        Me = UI.RegisterMelon((MelonBase)Core.Instance, Cat_NamePlate, Cat_SimpleConfig, Cat_Toggles, Cat_Advanced);
         Me.OnModSaved += OnPrefsSaved;
     }
 

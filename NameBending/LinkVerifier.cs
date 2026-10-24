@@ -25,8 +25,9 @@ public static class LinkVerifier
 
             return ecdsa.VerifyData(urlBytes, signature, HashAlgorithmName.SHA256);
         }
-        catch
+        catch (Exception e)
         {
+            Debug.Error(e.Message);
             return false;
         }
     }
